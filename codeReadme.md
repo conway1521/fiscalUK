@@ -36,4 +36,16 @@ Data Analysis
 
 Time Series and Present Value Calculations
 
-	•	Quarter Calculation: The findQuarter_cal and findQuarter_fis functions determine the quarter of a given date according to calendar
+	•	Quarter Calculation: The findQuarter_cal and findQuarter_fis functions determine the quarter of a given date according to calendar and fiscal years.
+	•	Present Value Calculation: The PVfunc function calculates the present value of future tax impacts.
+	•	Quarter Spread: The Qspread function spreads annual tax data across quarters.
+
+Normalization and Policy Shape Analysis
+
+	•	Normalization: Tax impacts are normalized based on the year with the greatest effect.
+	•	Policy Shape Classification: Policies are classified based on their time-series shapes (e.g., growing, peak, peak and recovery) using the data data frame.
+
+Plotting
+
+	•	Time Series Plotting: The script generates time series plots for different tax policy groups and types.
+	•	Policy Impulse Plotting: Normalized policy impulses are plotted over time for each tax type.
