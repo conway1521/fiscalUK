@@ -1,9 +1,24 @@
-# Abstract
+# Fiscal Multipliers and Household Heterogeneity (UK)
 
-Fiscal policy is a significant lever for policymakers to influence the financial means of people. However, it can have drastically different implications given one’s wealth and income situation.
+Estimation of household consumption responses to fiscal shocks across the UK wealth distribution, building on Hubert and Cumming's [2021 paper](https://direct.mit.edu/rest/article-abstract/105/5/1304/106895/The-Distribution-of-Households-Indebtedness-and) (*Review of Economics and Statistics*).
 
-The point of this project is to identify the channels through which fiscal policy influences consumption among people of varying credit constraints through a novel method. Together with Paul Hubert and Fergus Cumming, we build upon their [2021 paper](https://direct.mit.edu/rest/article-abstract/105/5/1304/106895/The-Distribution-of-Households-Indebtedness-and) to connect individuals’ asset liquidity with a unique fiscal policy dataset and estimate the specific consumption impacts. Measuring fiscal shock outcomes has not always been accurate (particularly in predicting them), and thus an alternative Narrative approach in conjunction with the heterogeneity of agents is employed.
+The core argument is that standard fiscal multiplier estimates miss distributional effects because they assume representative agents. Households with binding credit constraints respond differently to fiscal policy than liquid households -- a distinction that matters for both welfare analysis and policy design. We connect individual asset liquidity measures to a narrative fiscal shock dataset and estimate consumption impacts by credit constraint status.
 
-I use *R* to clean timeseries data and to perform regression analysis, robustness checks, and estimation of fiscal multipliers.
+The narrative identification approach follows Romer and Romer (2010), isolating exogenous fiscal shocks from the historical record to address the endogeneity problems that have plagued multiplier estimation.
+
+Co-authored with Paul Hubert (Sciences Po) and Fergus Cumming (Bank of England).
+
+## Methods
+
+- Narrative fiscal shock identification
+- Household heterogeneity via asset liquidity classification
+- Local projections for impulse response estimation
+- Robustness checks across wealth terciles and credit measures
+
+## Stack
+
+R: data cleaning, time series processing, local projections, and robustness estimation.
+
+## Status
 
 Work in progress.
