@@ -56,10 +56,12 @@ run_all.R             rebuild everything
 
 The headline output is `output/uk_tax_shocks_quarterly.csv`: two quarterly narrative tax shock
 series for 1945Q1-2018Q4 as a share of nominal GDP, one dated by implementation (the convention in
-the literature) and one by announcement. Their correlation is only 0.42, which is the point.
+the literature) and one by announcement. Both are restricted to household-relevant measures on
+both sides of the splice, because the modern coding never classified firm measures. Their
+correlation is only 0.19, which is the point.
 
-Sanity check on the largest shocks: 1979Q3 at +2.04% of GDP is the VAT unification to 15%; 1979Q4 at
--1.14% and 1988Q2 at -1.23% are the basic-rate cuts of those Budgets. The series puts recognisable
+Sanity check on the largest shocks: 1973Q2 at +1.55% of GDP is the introduction of VAT; 1979Q3 at
++1.53% is its unification to 15%; 1979Q4 and 1988Q2 are the basic-rate cuts. The series puts recognisable
 events in the right quarters with the right signs.
 
 Inputs are **not** version controlled and live in a sibling directory:
@@ -95,3 +97,11 @@ Requires R with `readxl`. Outputs land in `data-derived/` (measure-level dataset
 ## Status
 
 Pipeline complete and validated. Paper 1 in drafting. See [PLAN.md](PLAN.md).
+
+## Known limitation for Paper 2
+
+After restricting both sides of the splice to household measures, mean absolute shock is 0.080% of
+GDP for 1994-2003 against 0.058% for 2004-2013, a 27% magnitude gap. Some of this is real (fewer,
+larger measures post-2004); some may be residual coverage difference. **Test for a break at 2004
+before pooling, and report estimates with a post-2004 dummy as robustness.** `R/05_series.R` prints
+this diagnostic on every run. See PLAN.md §10.
