@@ -21,14 +21,20 @@ keep <- c("event","measure","tax_type","group","target","endo_exo","minor",
           "budget_date","announce","implement","stop","lag_months","lag_quarters","is_retro","imp_fy",
           "peak_value","is_reversal","usable","timing_sample",
           "ann_year_cal","ann_q_cal","imp_year_cal","imp_q_cal","imp_year_fis","imp_q_fis",
-          "imp_year_nret","imp_q_nret")
+          "imp_year_nret","imp_q_nret","tax_h")
 
+# Cloyne's tax_h comes from 04_cloyne_taxtype.R (the salvage). The modern
+# coding is ours and maps directly. NEVER recompute Cloyne's tax_h here from
+# his raw Tax Type column: his README disclaims it, and the salvage exists
+# precisely to avoid using it.
+if (!"tax_h" %in% names(cl))
+  stop("cloyne_measures.rds lacks tax_h - run R/04_cloyne_taxtype.R before R/03_chain.R")
+u$tax_h <- harmonise_tax_type(u$tax_type)
 a <- cl[, keep]; a$source <- "Cloyne";  a$has_profile <- FALSE
 b <- u[,  keep]; b$source <- "Modern";  b$has_profile <- TRUE
 chain <- rbind(a, b)
 chain <- chain[order(chain$budget_date), ]
 rownames(chain) <- NULL
-chain$tax_h <- harmonise_tax_type(chain$tax_type)   # common taxonomy, both codings
 
 OVL <- c(as.Date("2004-03-17"), as.Date("2009-04-22"))
 
