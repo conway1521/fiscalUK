@@ -37,7 +37,7 @@ UNAMBIGUOUS <- c("Income", "Duty", "CT", "VAT", "CGT", "NI", "Stamp duty", "Oil"
 cl$tax_label_ok <- tt %in% UNAMBIGUOUS
 cl$tax_h <- ifelse(cl$tax_label_ok, harmonise_tax_type(tt), NA_character_)
 
-s <- cl$usable
+s <- cl$timing_sample   # Paper 1 scope, not the narrower Paper 2 sample
 msg("clean exogenous rows: %d", sum(s))
 msg("with an unambiguous tax label: %d (%.1f%% of rows, %.1f%% of revenue)",
     sum(s & cl$tax_label_ok),

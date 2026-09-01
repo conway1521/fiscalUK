@@ -117,7 +117,10 @@ tidy_tax_type <- function(x) {
 #' Any chained analysis by instrument must run on this harmonised field.
 harmonise_tax_type <- function(x) {
   t <- tolower(trimws(x))
-  out <- rep("Other", length(t))
+  # Unrecognised labels stay NA. Defaulting them to "Other" would hand a
+  # confident category to the very rows the Cloyne salvage deliberately
+  # refused to classify.
+  out <- rep(NA_character_, length(t))
   out[t %in% c("income", "income tax")] <- "Income"
   out[t %in% c("ni", "nics", "national insurance", "social security")] <- "Social security"
   out[t %in% c("vat")] <- "VAT"
@@ -134,6 +137,7 @@ harmonise_tax_type <- function(x) {
                "apprenticeship levy")] <- "Corporate"
   out[t %in% c("oil", "north sea taxes", "prt")] <- "Oil and North Sea"
   out[t %in% c("council tax")] <- "Property recurrent"
+  out[t %in% c("other tax", "other")] <- "Other"
   out[is.na(t)] <- NA_character_
   out
 }
