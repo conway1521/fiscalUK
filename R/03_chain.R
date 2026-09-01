@@ -20,7 +20,8 @@ cl <- readRDS(file.path(DERIVED, "cloyne_measures.rds"))
 keep <- c("event","measure","tax_type","group","target","endo_exo","minor",
           "budget_date","announce","implement","stop","lag_months","lag_quarters","is_retro","imp_fy",
           "peak_value","is_reversal","usable",
-          "ann_year_cal","ann_q_cal","imp_year_cal","imp_q_cal","imp_year_fis","imp_q_fis")
+          "ann_year_cal","ann_q_cal","imp_year_cal","imp_q_cal","imp_year_fis","imp_q_fis",
+          "imp_year_nret","imp_q_nret")
 
 a <- cl[, keep]; a$source <- "Cloyne";  a$has_profile <- FALSE
 b <- u[,  keep]; b$source <- "Modern";  b$has_profile <- TRUE

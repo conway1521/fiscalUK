@@ -334,7 +334,51 @@ survives**, but two reporting units changed.
 - The revenue-weighted quarterly series is monotone and clean: 0, 0, 1, 1, 2, 4, 4 quarters from the
   1950s to the 2010s.
 
-## 10. Sequencing
+## 10. Validation of the Paper 2 series (1 September 2026)
+
+The §9 validation was framed around Paper 1. Re-running it against the shock series found that the
+retroactivity defect **also affected Paper 2**, plus a larger problem specific to it.
+
+### Defect 1: retroactive dating leaked into the series
+
+`05_series.R` aggregated on the raw implementation quarter, not Cloyne's no-retroactive field. That
+put 36 measures (1.5% of measures, 2.0% of revenue) in a quarter **before their announcement**, some
+up to five years before. For a series used as an instrument this is indefensible: the shock would
+predate the news. Fixed; zero measures now predate announcement.
+
+### Defect 2: coverage break at the splice — the bigger one
+
+Cloyne codes exogeneity for **every** measure. The modern data codes it for **household measures
+only**: of 630 rows, 334 are household and fully coded, while 249 of the 296 firm rows were left
+unclassified.
+
+So the spliced series was all-measures before 2004 and household-only after. Any VAR or local
+projection would read that as a structural break at exactly the splice point.
+
+Fixed by restricting both sides to household-relevant measures. **This forces reliance on Cloyne's
+disclaimed Group column.** Paper 1's headline avoids that column; Paper 2's series cannot. The
+tradeoff is deliberate and must be stated in the paper.
+
+### Residual risk, not fixed
+
+After the restriction, mean |shock| is 0.080% of GDP for 1994-2003 against 0.058% for 2004-2013, a
+**27% magnitude gap**. Some is real (fewer, larger measures post-2004); some may be residual coverage
+difference. `05_series.R` prints this every run.
+
+**Action for Paper 2: test for a break at 2004 before pooling, and report estimates with a post-2004
+dummy as robustness.** Do not assume the splice is clean.
+
+### Confirmed sound
+
+Cloyne's single revenue figure and the modern peak value are the **same economic object**. On the
+overlap, like-for-like, total absolute revenue is £42,865m against £43,014m, a ratio of 1.003.
+Year-one costings total only £22,470m, so Cloyne's figure is a full-effect concept, not a first-year
+one. The splice does not mix incompatible magnitudes.
+
+The sanity check strengthened after the fixes: 1973Q2 now shows +1.55% of GDP, the introduction of
+VAT in April 1973, alongside the 1979 unification at +1.53%.
+
+## 11. Sequencing
 
 Paper 1 first. It is close to done, needs no macro time series work, no micro data access, and no
 econometrics beyond description. Paper 2 depends on Paper 1's shock series and is the larger lift.

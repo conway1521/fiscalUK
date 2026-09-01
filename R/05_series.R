@@ -85,13 +85,36 @@ msg("extended to %dQ%d (%d quarters total); %d quarters imputed from OBR growth"
 #    double-count five years.
 # ---------------------------------------------------------------------------
 ch <- readRDS(file.path(DERIVED, "uk_chained_measures.rds"))
-m <- ch[ch$usable &
+
+# COVERAGE HOMOGENEITY. Cloyne codes exogeneity for every measure, business and
+# household. The modern data codes it for HOUSEHOLD measures only: of 630 rows,
+# 334 are household and fully coded, while 249 of the 296 firm rows were left
+# unclassified. So post-2004 the series can contain only household measures.
+# Splicing an all-measures series onto a household-only one would put a coverage
+# break at 2004 that any VAR or local projection would read as a structural
+# break. Both sides are therefore restricted to household-relevant measures.
+#
+# This forces reliance on Cloyne's Group column, which his README disclaims.
+# Paper 1's headline avoids that column; Paper 2's series cannot. The tradeoff
+# is deliberate and must be stated in the paper.
+m <- ch[ch$usable & ch$target == "H" & !is.na(ch$target) &
         ((ch$source == "Cloyne" & ch$budget_date <  SPLICE) |
          (ch$source == "Modern" & ch$budget_date >= SPLICE)), ]
 msg("")
-msg("spliced at %s: %d Cloyne + %d modern = %d measures",
+msg("spliced at %s, household-relevant only: %d Cloyne + %d modern = %d measures",
     format(SPLICE), sum(m$source == "Cloyne"), sum(m$source == "Modern"), nrow(m))
-msg("dropped as overlap duplicates: %d", sum(ch$usable) - nrow(m))
+msg("excluded: %d overlap duplicates and business-targeted measures",
+    sum(ch$usable) - nrow(m))
+
+# RETROACTIVE DATING. The raw implementation quarter puts 36 Cloyne measures
+# (2.0% of revenue) in a quarter BEFORE their announcement, some up to five
+# years before. For a shock series that is indefensible: the shock would predate
+# the news. Aggregation uses the no-retroactive implementation quarter.
+m$imp_y <- ifelse(is.na(m$imp_year_nret), m$imp_year_cal, m$imp_year_nret)
+m$imp_q <- ifelse(is.na(m$imp_q_nret),    m$imp_q_cal,    m$imp_q_nret)
+still_retro <- (4*(m$imp_y - m$ann_year_cal) + (m$imp_q - m$ann_q_cal)) < 0
+msg("measures still dated before announcement after the fix: %d",
+    sum(still_retro, na.rm = TRUE))
 
 # ---------------------------------------------------------------------------
 # 3. Aggregate to quarterly and scale by GDP
@@ -111,11 +134,11 @@ agg <- function(yr, qt, val) {
   as.numeric(out)
 }
 
-grid$shock_imp_m   <- agg(m$imp_year_cal, m$imp_q_cal, m$peak_value)
+grid$shock_imp_m   <- agg(m$imp_y, m$imp_q, m$peak_value)
 grid$shock_ann_m   <- agg(m$ann_year_cal, m$ann_q_cal, m$peak_value)
 grid$shock_imp_pct <- 100 * grid$shock_imp_m / grid$gdp
 grid$shock_ann_pct <- 100 * grid$shock_ann_m / grid$gdp
-grid$n_imp <- agg(m$imp_year_cal, m$imp_q_cal, rep(1, nrow(m)))
+grid$n_imp <- agg(m$imp_y, m$imp_q, rep(1, nrow(m)))
 grid$n_ann <- agg(m$ann_year_cal, m$ann_q_cal, rep(1, nrow(m)))
 
 msg("")
@@ -145,6 +168,36 @@ for (i in seq_len(nrow(top))) {
       top$year[i], top$quarter[i], top$shock_imp_pct[i], top$n_imp[i],
       substr(gsub("[\r\n]+", " ", big), 1, 60))
 }
+
+# ---------------------------------------------------------------------------
+# 5. Splice diagnostic. Read this before using the series.
+#    Homogeneity across 2004 is the main threat to Paper 2. Restricting both
+#    sides to household measures removes most of the gap, but not all of it.
+# ---------------------------------------------------------------------------
+msg("")
+msg("--- SPLICE DIAGNOSTIC: ten years either side of 2004 ---")
+w <- function(y) grid$year %in% y
+sd_tab <- rbind(
+  `1994-2003 (Cloyne)` = c(
+    measures_pa  = sum(m$source == "Cloyne" & format(m$budget_date, "%Y") %in% as.character(1994:2003)) / 10,
+    nonzero_qtrs = sum(grid$n_imp[w(1994:2003)] > 0),
+    mean_abs_pct = mean(abs(grid$shock_imp_pct[w(1994:2003)])),
+    sd_pct       = sd(grid$shock_imp_pct[w(1994:2003)])),
+  `2004-2013 (modern)` = c(
+    measures_pa  = sum(m$source == "Modern" & format(m$budget_date, "%Y") %in% as.character(2004:2013)) / 10,
+    nonzero_qtrs = sum(grid$n_imp[w(2004:2013)] > 0),
+    mean_abs_pct = mean(abs(grid$shock_imp_pct[w(2004:2013)])),
+    sd_pct       = sd(grid$shock_imp_pct[w(2004:2013)])))
+print(round(sd_tab, 4))
+msg("")
+msg("  Measure COUNT differs by construction (Cloyne itemises ~11 per Budget, the")
+msg("  modern coding ~4) and does not matter for a summed series. What matters is")
+msg("  MAGNITUDE: mean|shock| is %.4f vs %.4f %% of GDP, a %.0f%% gap.",
+    sd_tab[1,"mean_abs_pct"], sd_tab[2,"mean_abs_pct"],
+    100 * abs(sd_tab[1,"mean_abs_pct"] - sd_tab[2,"mean_abs_pct"]) / sd_tab[1,"mean_abs_pct"])
+msg("  Some of this is real (fewer, larger measures post-2004); some may be residual")
+msg("  coverage difference. TEST FOR A BREAK AT 2004 before pooling in Paper 2, and")
+msg("  report estimates with a post-2004 dummy as robustness.")
 
 write.csv(grid, file.path(OUTPUT, "uk_tax_shocks_quarterly.csv"), row.names = FALSE)
 saveRDS(list(series = grid, measures = m), file.path(DERIVED, "uk_shock_series.rds"))

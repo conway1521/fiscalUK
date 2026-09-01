@@ -179,3 +179,16 @@ uk <- list(measures = d, profile = prof, profile_norm = prof_norm, fy = FY)
 saveRDS(uk, file.path(DERIVED, "uk_measures.rds"))
 write.csv(cbind(d, prof, prof_norm), file.path(DERIVED, "uk_measures.csv"), row.names = FALSE)
 msg("written: data-derived/uk_measures.{rds,csv}")
+
+# The modern coding has no no-retroactive field; retroactivity is negligible
+# here (1 measure of 163 at quarterly resolution), so the raw implementation
+# quarter serves, floored at the announcement quarter for consistency with the
+# Cloyne side.
+d$imp_year_nret <- d$imp_year_cal
+d$imp_q_nret    <- d$imp_q_cal
+fix <- which(!is.na(d$lag_quarters) & d$is_retro %in% TRUE)
+d$imp_year_nret[fix] <- d$ann_year_cal[fix]
+d$imp_q_nret[fix]    <- d$ann_q_cal[fix]
+uk <- list(measures = d, profile = prof, profile_norm = prof_norm, fy = FY)
+saveRDS(uk, file.path(DERIVED, "uk_measures.rds"))
+write.csv(cbind(d, prof, prof_norm), file.path(DERIVED, "uk_measures.csv"), row.names = FALSE)
