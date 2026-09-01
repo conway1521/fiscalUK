@@ -35,7 +35,7 @@ d <- data.frame(
   id          = seq_along(hh),
   row_super   = hh,
   event       = as.character(cls$event),
-  measure     = as.character(cls$measure),
+  measure     = fix_encoding(as.character(cls$measure)),
   tax_type    = tidy_tax_type(as.character(cls$tax_type)),
   endo_exo    = as.character(cls$endo_exo),
   minor       = as.character(sup$minor1[hh]),
@@ -63,6 +63,19 @@ fq <- assign_quarter(d$implement, "fiscal");   d$imp_year_fis <- fq$year; d$imp_
 
 d$lag_months <- as.numeric(d$implement - d$announce) / 30.4375
 d$imp_fy     <- fiscal_year(d$implement)
+
+# Lag in QUARTERS, floored at zero. This is the unit used for the headline.
+#
+# Day-level lags are contaminated by the tax-year convention: a Budget on 17
+# April implementing "from 6 April" scores as -11 days, which reads as
+# retroactive but is not economically meaningful. That convention was far more
+# common in the early post-war decades than later, i.e. it varies in the same
+# direction as the trend being measured, so it must not enter the headline.
+# Cloyne ships a "no retroactive component" quarter for the same reason.
+d$lag_quarters <- pmax(0, 4 * (d$imp_year_cal - d$ann_year_cal) +
+                          (d$imp_q_cal - d$ann_q_cal))
+d$is_retro     <- (4 * (d$imp_year_cal - d$ann_year_cal) +
+                      (d$imp_q_cal - d$ann_q_cal)) < 0
 
 msg("dates parsed: announce %d NA, implement %d NA", sum(is.na(d$announce)), sum(is.na(d$implement)))
 
@@ -102,6 +115,27 @@ peak_val[!is.na(peak_val) & peak_val == 0] <- NA_real_
 d$peak_value    <- peak_val                          # GBP million, + raises revenue
 d$years_to_peak <- peak_idx - 1L
 d$n_costings    <- rowSums(!is.na(prof))
+d$window        <- rowSums(!is.na(prof))
+
+# --- three flags the profile analysis must respect -------------------------
+#
+# (1) SIGN FLIP. Normalising by the peak assumes one sign throughout. Seven
+#     measures switch sign (e.g. a duty freeze costing money, then an escalator
+#     raising it). Their normalised values go negative and averaging them into
+#     a mean profile is meaningless: -0.4 and +0.4 cancel to zero.
+d$sign_flip <- apply(prof, 1, function(v) {
+  v <- v[!is.na(v)]; length(v) > 0 && any(v > 0) && any(v < 0)
+})
+
+# (2) CENSORED PEAK. Costings stop at FY2023-24, so a measure implemented in
+#     2017 has only a 7-year window. If its effect is still growing at the edge,
+#     the observed "peak" is a lower bound and the normalised year-one share is
+#     biased UP. 68% of measures peak in their last observed year.
+d$peak_censored <- !is.na(d$years_to_peak) & d$years_to_peak == (d$window - 1L) & d$window < H
+
+# (3) FULL WINDOW. Measures with all ten years observed. Headline profile
+#     statistics run on these; the full sample is reported as robustness.
+d$full_window <- d$window == H
 
 prof_norm <- prof / peak_val
 colnames(prof_norm) <- paste0("n", seq_len(H))
@@ -114,11 +148,32 @@ d$years_to_half <- vapply(seq_len(nrow(prof_norm)), function(i) {
 d$months_ann_to_half <- d$lag_months + 12 * d$years_to_half
 d$year1_share <- prof_norm[, 1]
 
-# --- analysis flag -----------------------------------------------------------
+# --- analysis flags ----------------------------------------------------------
+# `usable`        : the lag sample. Profile quality is irrelevant here.
+# `profile_usable`: the phase-in sample. Excludes sign-flipping measures, whose
+#                   normalised profiles are not averageable.
 d$usable <- d$endo_exo == "X" & !d$is_reversal &
   !is.na(d$announce) & !is.na(d$implement) & !is.na(d$peak_value)
-msg("exogenous: %d | clean exogenous with usable profile: %d",
-    sum(d$endo_exo == "X"), sum(d$usable))
+d$profile_usable <- d$usable & !d$sign_flip
+
+msg("exogenous: %d | clean exogenous (lag sample): %d", sum(d$endo_exo == "X"), sum(d$usable))
+msg("  excluded from the PROFILE sample:")
+msg("    sign-flipping costings: %d", sum(d$usable & d$sign_flip))
+msg("  profile sample: %d, of which full 10-year window: %d",
+    sum(d$profile_usable), sum(d$profile_usable & d$full_window))
+msg("  peak is censored (last observed year, short window): %d (%.1f%%)",
+    sum(d$profile_usable & d$peak_censored),
+    100 * mean(d$peak_censored[d$profile_usable]))
+msg("  -> years_to_peak is NOT reportable as a statistic; use the fixed-horizon profile")
+
+pu <- d$profile_usable
+msg("")
+msg("mean normalised profile, years 1-6:")
+msg("  full window only (n=%d): %s", sum(pu & d$full_window),
+    paste(sprintf("%.2f", colMeans(prof_norm[pu & d$full_window, , drop = FALSE], na.rm = TRUE)[1:6]), collapse = " "))
+msg("  all profile-usable (n=%d): %s", sum(pu),
+    paste(sprintf("%.2f", colMeans(prof_norm[pu, , drop = FALSE], na.rm = TRUE)[1:6]), collapse = " "))
+msg("  (the gap is truncation bias: censored peaks inflate the year-one share)")
 
 uk <- list(measures = d, profile = prof, profile_norm = prof_norm, fy = FY)
 saveRDS(uk, file.path(DERIVED, "uk_measures.rds"))

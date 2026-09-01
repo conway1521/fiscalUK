@@ -18,7 +18,7 @@ u  <- uk$measures
 cl <- readRDS(file.path(DERIVED, "cloyne_measures.rds"))
 
 keep <- c("event","measure","tax_type","group","target","endo_exo","minor",
-          "budget_date","announce","implement","stop","lag_months","imp_fy",
+          "budget_date","announce","implement","stop","lag_months","lag_quarters","is_retro","imp_fy",
           "peak_value","is_reversal","usable",
           "ann_year_cal","ann_q_cal","imp_year_cal","imp_q_cal","imp_year_fis","imp_q_fis")
 
@@ -95,23 +95,32 @@ print(round(tapply(g$lag_months, list(g$tax_h, g$source), median, na.rm = TRUE),
 # in the 1970s, 20.9 in the 1980s), so the unweighted series is confounded by
 # itemisation practice and must not be the headline.
 # ---------------------------------------------------------------------------
+# Reported in QUARTERS, not months. Day-level lags are contaminated by the
+# tax-year convention: a Budget on 17 April implementing "from 6 April" scores
+# as -11 days, which reads as retroactive but is not economically meaningful.
+# That convention was far more common early than late (42% of 1950s measures
+# score negative in days, against 3% in the 1990s), so it varies in the same
+# direction as the trend and would bias the early decades downward.
+# Quarterly resolution removes it, and Cloyne ships a no-retroactive quarter
+# for precisely this reason. `lag_quarters` uses it and is floored at zero.
 decade_trend <- function(d) {
-  d <- d[!is.na(d$lag_months) & !is.na(d$announce), ]
+  d <- d[!is.na(d$lag_quarters) & !is.na(d$announce), ]
   d$decade <- 10 * (as.integer(format(d$announce, "%Y")) %/% 10)
   do.call(rbind, lapply(split(d, d$decade), function(s) data.frame(
     decade       = s$decade[1],
     n            = nrow(s),
     meas_per_evt = round(nrow(s) / length(unique(s$budget_date)), 1),
-    unweighted   = round(median(s$lag_months, na.rm = TRUE), 1),
-    rev_weighted = round(weighted_median(s$lag_months, abs(s$peak_value)), 1),
-    event_median = round(median(tapply(s$lag_months, s$budget_date, median, na.rm = TRUE)), 1),
+    pct_retro    = round(100 * mean(s$is_retro, na.rm = TRUE), 1),
+    unweighted_q = round(median(s$lag_quarters), 2),
+    rev_wtd_q    = round(weighted_median(s$lag_quarters, abs(s$peak_value)), 2),
+    rev_wtd_mths = round(3 * weighted_median(s$lag_quarters, abs(s$peak_value)), 1),
     source       = paste(unique(s$source), collapse = "+")
   )))
 }
 
 msg("")
-msg("--- announcement-to-implementation lag (months) by decade ---")
-msg("    HEADLINE SAMPLE: all clean exogenous measures (endorsed columns only)")
+msg("--- announcement-to-implementation lag by decade, in QUARTERS ---")
+msg("    HEADLINE: all clean exogenous, no-retroactive dating, endorsed columns only")
 tr <- decade_trend(chain[chain$usable, ])
 print(tr, row.names = FALSE)
 
