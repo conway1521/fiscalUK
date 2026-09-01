@@ -41,8 +41,18 @@ R/00_setup.R          paths, date and quarter helpers, tax-type taxonomies
 R/01_build_uk.R       modern coding 2004-2018, with multi-year phase-in profiles
 R/02_build_cloyne.R   Cloyne 1945-2009 (single revenue figure per measure)
 R/03_chain.R          chaining plus the overlap validation gate
+R/04_cloyne_taxtype.R salvages Cloyne's disclaimed tax-type field
+R/05_series.R         quarterly shock series, 1945Q1-2018Q4
 run_all.R             rebuild everything
 ```
+
+The headline output is `output/uk_tax_shocks_quarterly.csv`: two quarterly narrative tax shock
+series for 1945Q1-2018Q4 as a share of nominal GDP, one dated by implementation (the convention in
+the literature) and one by announcement. Their correlation is only 0.42, which is the point.
+
+Sanity check on the largest shocks: 1979Q3 at +2.04% of GDP is the VAT unification to 15%; 1979Q4 at
+-1.14% and 1988Q2 at -1.23% are the basic-rate cuts of those Budgets. The series puts recognisable
+events in the right quarters with the right signs.
 
 Inputs are **not** version controlled and live in a sibling directory:
 
