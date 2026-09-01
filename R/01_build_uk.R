@@ -1,0 +1,126 @@
+# 01_build_uk.R --------------------------------------------------------------
+# Build the modern UK measure-level dataset (Budget 2004 - Autumn 2018).
+#
+# Authoritative classification source is UK_classification.xlsx sheet
+# "Narrative2021" (334 household measures, fully coded). NarrativeClassif.xlsx
+# is the 630-row superset but is stale: 34 household rows still carry the
+# literal string "NA" in endo_exo. We take classification from the former and
+# row-align the costing profiles from taxData.xlsx via the latter.
+
+source("R/00_setup.R")
+
+msg("== 01_build_uk ==")
+
+# --- load -------------------------------------------------------------------
+sup <- rx(file.path(DATA, "NarrativeClassif.xlsx"))                       # 630 rows
+tax <- rx(file.path(DATA, "taxData.xlsx"))                                # 630 x 20
+cls <- rx(file.path(DATA, "Budgetary data/UK/UK_classification.xlsx"),
+          sheet = "Narrative2021")                                        # 334 rows
+
+FY <- 2004:2023                                    # fiscal years 2004-05 .. 2023-24
+stopifnot(ncol(tax) == length(FY))
+
+hh <- which(sup$target == "H")
+if (length(hh) != nrow(cls) ||
+    !identical(as.character(sup$measure[hh]), as.character(cls$measure))) {
+  stop("Row alignment between NarrativeClassif and UK_classification has broken.")
+}
+msg("household rows aligned: %d", length(hh))
+
+# --- reconcile classification ------------------------------------------------
+stale <- sum(sup$endo_exo[hh] == "NA", na.rm = TRUE)
+msg("stale 'NA' endo_exo rows in superset, resolved from UK_classification: %d", stale)
+
+d <- data.frame(
+  id          = seq_along(hh),
+  row_super   = hh,
+  event       = as.character(cls$event),
+  measure     = as.character(cls$measure),
+  tax_type    = tidy_tax_type(as.character(cls$tax_type)),
+  endo_exo    = as.character(cls$endo_exo),
+  minor       = as.character(sup$minor1[hh]),
+  reason      = as.character(cls$reason),
+  quote       = as.character(cls$quote),
+  cloyne_note = as.character(cls$`Cloyne diff`),
+  stringsAsFactors = FALSE
+)
+d$group <- map_group(d$tax_type)
+d$target <- "H"
+
+if (any(is.na(d$group))) {
+  warning("unmapped tax types: ", paste(unique(d$tax_type[is.na(d$group)]), collapse = ", "))
+}
+
+# --- dates ------------------------------------------------------------------
+d$announce  <- excel_date(cls$announce)
+d$implement <- excel_date(cls$implement)
+d$stop      <- excel_date(cls$stop)
+d$budget_date <- as.Date(sup$budg_date[hh])
+
+aq <- assign_quarter(d$announce,  "calendar"); d$ann_year_cal <- aq$year; d$ann_q_cal <- aq$quarter
+iq <- assign_quarter(d$implement, "calendar"); d$imp_year_cal <- iq$year; d$imp_q_cal <- iq$quarter
+fq <- assign_quarter(d$implement, "fiscal");   d$imp_year_fis <- fq$year; d$imp_q_fis <- fq$quarter
+
+d$lag_months <- as.numeric(d$implement - d$announce) / 30.4375
+d$imp_fy     <- fiscal_year(d$implement)
+
+msg("dates parsed: announce %d NA, implement %d NA", sum(is.na(d$announce)), sum(is.na(d$implement)))
+
+# --- reversals ---------------------------------------------------------------
+# 'REVERSE' rows undo an earlier measure. They are real fiscal actions and are
+# kept, but flagged so the phase-in analysis can exclude them (their profile is
+# mechanically the mirror of the parent measure).
+d$is_reversal <- grepl("^\\s*REVERSE", d$measure, ignore.case = TRUE)
+d$has_stop    <- !is.na(d$stop)
+msg("reversal rows: %d   rows with stop date: %d", sum(d$is_reversal), sum(d$has_stop))
+
+# --- costing profiles --------------------------------------------------------
+# Anchor on the IMPLEMENTATION fiscal year, not the first non-missing costing.
+# Only 39 of 165 coincide: OBR scorecards begin in the Budget year, so aligning
+# on first-non-missing measures the announcement year and understates year one.
+TX <- as.matrix(tax[hh, ]); mode(TX) <- "numeric"
+colnames(TX) <- FY
+H <- 10L
+
+imp_col <- match(d$imp_fy, FY)
+prof <- matrix(NA_real_, nrow(d), H,
+               dimnames = list(NULL, paste0("y", seq_len(H))))
+for (i in seq_len(nrow(d))) {
+  j <- imp_col[i]
+  if (is.na(j)) next
+  take <- j:(j + H - 1L)
+  keep <- take <= ncol(TX)                 # no clamping: past the data edge is NA
+  prof[i, keep] <- TX[i, take[keep]]
+}
+
+# peak (largest absolute effect) used as the normaliser
+peak_idx <- apply(prof, 1, function(v) if (all(is.na(v))) NA_integer_ else which.max(abs(v)))
+peak_val <- vapply(seq_len(nrow(prof)), function(i)
+  if (is.na(peak_idx[i])) NA_real_ else prof[i, peak_idx[i]], numeric(1))
+peak_val[!is.na(peak_val) & peak_val == 0] <- NA_real_
+
+d$peak_value    <- peak_val                          # GBP million, + raises revenue
+d$years_to_peak <- peak_idx - 1L
+d$n_costings    <- rowSums(!is.na(prof))
+
+prof_norm <- prof / peak_val
+colnames(prof_norm) <- paste0("n", seq_len(H))
+
+# years from implementation until at least half the full effect is delivered
+d$years_to_half <- vapply(seq_len(nrow(prof_norm)), function(i) {
+  w <- which(abs(prof_norm[i, ]) >= 0.5)
+  if (!length(w)) NA_real_ else w[1] - 1
+}, numeric(1))
+d$months_ann_to_half <- d$lag_months + 12 * d$years_to_half
+d$year1_share <- prof_norm[, 1]
+
+# --- analysis flag -----------------------------------------------------------
+d$usable <- d$endo_exo == "X" & !d$is_reversal &
+  !is.na(d$announce) & !is.na(d$implement) & !is.na(d$peak_value)
+msg("exogenous: %d | clean exogenous with usable profile: %d",
+    sum(d$endo_exo == "X"), sum(d$usable))
+
+uk <- list(measures = d, profile = prof, profile_norm = prof_norm, fy = FY)
+saveRDS(uk, file.path(DERIVED, "uk_measures.rds"))
+write.csv(cbind(d, prof, prof_norm), file.path(DERIVED, "uk_measures.csv"), row.names = FALSE)
+msg("written: data-derived/uk_measures.{rds,csv}")
