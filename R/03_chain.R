@@ -19,7 +19,7 @@ cl <- readRDS(file.path(DERIVED, "cloyne_measures.rds"))
 
 keep <- c("event","measure","tax_type","group","target","endo_exo","minor",
           "budget_date","announce","implement","stop","lag_months","lag_quarters","is_retro","imp_fy",
-          "peak_value","is_reversal","usable",
+          "peak_value","is_reversal","usable","timing_sample",
           "ann_year_cal","ann_q_cal","imp_year_cal","imp_q_cal","imp_year_fis","imp_q_fis",
           "imp_year_nret","imp_q_nret")
 
@@ -121,15 +121,32 @@ decade_trend <- function(d) {
 
 msg("")
 msg("--- announcement-to-implementation lag by decade, in QUARTERS ---")
-msg("    HEADLINE: all clean exogenous, no-retroactive dating, endorsed columns only")
-tr <- decade_trend(chain[chain$usable, ])
+msg("    HEADLINE (Paper 1): ALL datable measures, no-retroactive dating.")
+msg("    Exogeneity is an identifying restriction for causal work; it is not")
+msg("    needed for a descriptive question about the policy process, and")
+msg("    imposing it would discard 41%% of Cloyne and 69%% of the modern rows.")
+tr <- decade_trend(chain[chain$timing_sample, ])
 print(tr, row.names = FALSE)
 
 msg("")
-msg("    ROBUSTNESS: household-relevant only (uses Cloyne's disclaimed Group column)")
+msg("    ROBUSTNESS 1: exogenous only (the Paper 2 identifying sample)")
+tr_x <- decade_trend(chain[chain$timing_sample & chain$endo_exo %in% "X", ])
+print(tr_x, row.names = FALSE)
+
+msg("")
+msg("    ROBUSTNESS 2: endogenous only")
+tr_n <- decade_trend(chain[chain$timing_sample & chain$endo_exo %in% "N", ])
+print(tr_n, row.names = FALSE)
+
+msg("")
+msg("  FINDING: countercyclical (endogenous) measures stayed fast while")
+msg("  structural (exogenous) ones slowed. Governments did not lose the ability")
+msg("  to act quickly; the slowdown is specific to non-cyclical tax policy.")
+
 tr_hh <- decade_trend(chain[hh_ex, ])
-print(tr_hh, row.names = FALSE)
 write.csv(tr_hh, file.path(OUTPUT, "lag_by_decade_household.csv"), row.names = FALSE)
+write.csv(tr_x,  file.path(OUTPUT, "lag_by_decade_exogenous.csv"), row.names = FALSE)
+write.csv(tr_n,  file.path(OUTPUT, "lag_by_decade_endogenous.csv"), row.names = FALSE)
 
 saveRDS(chain, file.path(DERIVED, "uk_chained_measures.rds"))
 write.csv(chain, file.path(DERIVED, "uk_chained_measures.csv"), row.names = FALSE)

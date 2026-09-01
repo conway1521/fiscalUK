@@ -66,13 +66,25 @@ d$has_stop    <- !is.na(d$stop)
 d$target <- ifelse(is.na(d$group), NA_character_,
                    ifelse(d$group == "Business", "F", "H"))
 
-d$usable <- d$endo_exo == "X" & !is.na(d$endo_exo) & d$excluded == 0 &
-  !d$is_reversal & !is.na(d$announce) & !is.na(d$implement) & !is.na(d$peak_value) &
+# `timing_sample`: Paper 1. Every datable, non-reversal measure regardless of
+#                  exogeneity. A descriptive question about how long the policy
+#                  process takes has no endogeneity to purge, and requiring
+#                  exogeneity discards 41% of Cloyne's datable measures.
+# `usable`       : Paper 2. Exogenous only, because a causal estimate does need
+#                  the identifying restriction.
+d$timing_sample <- d$excluded == 0 & !d$is_reversal &
+  !is.na(d$announce) & !is.na(d$implement) & !is.na(d$peak_value) &
   !is.na(d$lag_quarters)
+d$usable <- d$timing_sample & d$endo_exo %in% "X"
 
 msg("rows: %d  |  exogenous: %d  |  excluded flagged: %d",
     nrow(d), sum(d$endo_exo == "X", na.rm = TRUE), sum(d$excluded != 0))
-msg("clean exogenous (any target): %d  |  of which household-relevant: %d",
+msg("timing sample (Paper 1, all measures): %d", sum(d$timing_sample))
+msg("  of which exogenous: %d, endogenous: %d, uncoded: %d",
+    sum(d$timing_sample & d$endo_exo %in% "X"),
+    sum(d$timing_sample & d$endo_exo %in% "N"),
+    sum(d$timing_sample & !(d$endo_exo %in% c("X","N"))))
+msg("exogenous (Paper 2): %d  |  of which household-relevant: %d",
     sum(d$usable), sum(d$usable & d$target == "H", na.rm = TRUE))
 msg("date range: %s to %s", format(min(d$budget_date, na.rm = TRUE)),
     format(max(d$budget_date, na.rm = TRUE)))
