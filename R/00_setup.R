@@ -89,6 +89,17 @@ map_group <- function(tax_type) {
   out
 }
 
+#' Repair UTF-8 read as latin1 ("¬£85,000" -> "£85,000"). 50 modern measure
+#' descriptions are affected; cosmetic, but they would surface in any published
+#' appendix or dataset release.
+fix_encoding <- function(x) {
+  x <- gsub("¬£", "£", x)   # ¬£ -> £
+  x <- gsub("Â£", "£", x)   # Â£ -> £
+  x <- gsub("â", "'", x)  # curly apostrophe
+  x <- gsub("â|â", "\"", x)
+  x
+}
+
 #' Tidy tax-type labels (fixes the capitalisation/plural drift in the source).
 tidy_tax_type <- function(x) {
   x <- trimws(x)

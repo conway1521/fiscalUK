@@ -12,27 +12,35 @@ See [PLAN.md](PLAN.md) for the research plan and the two papers it supports.
 
 ## Headline finding so far
 
-UK tax policy has become slow. Announcement-to-implementation lag in months for clean exogenous
-measures, by decade:
+UK tax policy has become slow. Announcement-to-implementation lag in **quarters** for clean exogenous
+measures, by decade, using no-retroactive dating:
 
 | Estimator | 1940s | 1950s | 1960s | 1970s | 1980s | 1990s | 2000s | 2010s |
 |---|---|---|---|---|---|---|---|---|
-| **Revenue-weighted** | 5.4 | -0.1 | 0.0 | 2.2 | 0.7 | 4.3 | 12.6 | 12.4 |
-| Unweighted | 0.8 | 0.0 | 0.0 | 0.4 | 0.6 | 0.9 | 3.9 | 12.3 |
-| Event median | 0.8 | 0.0 | 0.0 | 0.4 | 0.4 | 2.9 | 3.7 | 12.4 |
+| **Revenue-weighted** | 2 | 0 | 0 | 1 | 1 | 2 | **4** | **4** |
+| Unweighted | 0 | 0 | 0 | 1 | 1 | 1 | 2 | 4 |
 
-Measures that once took effect on Budget day now take roughly a year. The three estimators disagree
-about **when** the shift happened, and that is substantive rather than a nuisance: revenue-weighting
-is dominated by large measures, so the weighted series shows lead times lengthening from the 1990s,
-a decade before the unweighted series notices. Large tax changes were pre-announced first; small ones
-followed.
+Measures that once took effect in the quarter they were announced now take a full year.
 
-**Use the revenue-weighted series.** Cloyne's itemisation varies four-fold across decades (5.6
-measures per Budget in the 1970s, 24.2 in the 1980s), so the unweighted series is confounded by
-itemisation practice.
+**Two reporting choices matter, and both were arrived at by testing rather than assumption.**
 
-Separately, for 2004-2018 where multi-year profiles exist, the average measure delivers only ~43% of
-its full effect in its first year of operation, and the profile differs sharply by instrument.
+*Quarters, not months.* Day-level lags are contaminated by the tax-year convention: a Budget on 17
+April implementing "from 6 April" scores as −11 days, which reads as retroactive but is not
+economically meaningful. That convention was far more common early than late (42% of 1950s measures
+score negative in days, against 3% in the 1990s), so it varies in the same direction as the trend and
+would bias the early decades downward. Cloyne ships a "no retroactive component" implementation
+quarter for exactly this reason; the pipeline uses it.
+
+*Revenue-weighted, not unweighted.* Cloyne's itemisation varies four-fold across decades (5.6
+measures per Budget in the 1970s, 24.2 in the 1980s), so an unweighted median is partly measuring
+bookkeeping practice. Weighting by absolute revenue makes a five-way split count the same as the
+unsplit equivalent, and is validated on the 2004-2009 overlap where it drives the two independent
+codings to the same answer.
+
+Separately, for 2004-2018 where multi-year profiles exist, the average measure delivers **40%** of its
+full effect in its first year of operation, and the profile differs sharply by instrument. That figure
+is computed on measures with a complete ten-year window; including truncated windows inflates it to
+43%, because a censored peak makes the first year look larger than it is.
 
 ## Repository layout
 

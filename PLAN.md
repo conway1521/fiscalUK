@@ -290,7 +290,51 @@ This matters because the household filter derives from `Group` and the by-instru
   pre-2004 instrument breakdown requires hand-verifying Cloyne's tax types first, which is a scoped
   task rather than an assumption.
 
-## 9. Sequencing
+## 9. Adversarial validation of the Paper 1 data step (1 September 2026)
+
+Nine threats tested. Five passed, four found real defects, all now fixed. **The headline finding
+survives**, but two reporting units changed.
+
+### Passed
+
+- **Selection on the dependent variable.** Cloyne drops measures lacking an implementation date. If
+  that varied by decade it could manufacture the trend. It does, but in the *opposite* direction:
+  8.3% lost in the 1940s falling to 0.3% in the 2000s. Selection works against the finding.
+- **Date parsing.** No impossible dates; announcement equals the Budget date for 91% of rows.
+- **Duplicates.** 25 duplicated (date, description) keys in Cloyne, but 24 carry different values,
+  so they are sub-measures rather than double counts. The 2 in the modern data are likewise
+  components of one measure with opposite signs.
+- **Known test case.** The December 2008 temporary VAT cut is present, correctly coded endogenous,
+  with a stop date and a matching REVERSE row implementing on the reversal date.
+- **Truncation bias.** Present but small: the year-one share is 0.40 on full-window measures against
+  0.43 on all, a 3pp overstatement.
+
+### Fixed
+
+1. **Retroactivity contaminated the lag.** Day-level lags counted the tax-year convention (Budget in
+   mid-April, effective from 6 April) as retroactive implementation. This affected 42% of 1950s
+   measures against 3% of 1990s ones, i.e. it varied with the trend. Now reported in **quarters**
+   using Cloyne's no-retroactive field, which differs from his raw date for 22% of measures.
+2. **Sign-flipping profiles.** Seven measures switch sign across their costing profile (a duty
+   freeze that costs money, then an escalator that raises it). Normalising by the peak sent their
+   normalised values negative, and averaging those into a mean profile is meaningless because −0.4
+   and +0.4 cancel. Now excluded via `profile_usable`.
+3. **Censored peaks.** 68% of measures peak in their last observed year, and 34% have a genuinely
+   short window, so the observed peak is a lower bound. **`years_to_peak` is not a reportable
+   statistic** and has been dropped from the outputs; the headline profile now runs on full-window
+   measures only.
+4. **Encoding.** 50 modern descriptions carried UTF-8-read-as-latin1 mojibake ("¬£85,000").
+
+### Consequences for the paper
+
+- Report lags in **quarters**, not months. The month figures previously quoted (0.9 in the 1990s,
+  12.6 in the 2000s) were built on contaminated dating.
+- Report the year-one share as **40%**, not 43%.
+- Do not report years-to-peak.
+- The revenue-weighted quarterly series is monotone and clean: 0, 0, 1, 1, 2, 4, 4 quarters from the
+  1950s to the 2010s.
+
+## 10. Sequencing
 
 Paper 1 first. It is close to done, needs no macro time series work, no micro data access, and no
 econometrics beyond description. Paper 2 depends on Paper 1's shock series and is the larger lift.
