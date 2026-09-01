@@ -12,15 +12,26 @@ See [PLAN.md](PLAN.md) for the research plan and the two papers it supports.
 
 ## Headline finding so far
 
-UK tax policy has become slow. Announcement-to-implementation lag in **quarters** for clean exogenous
-measures, by decade, using no-retroactive dating:
+UK tax policy has become slow. Revenue-weighted announcement-to-implementation lag in **quarters**,
+by decade, no-retroactive dating, all datable measures (n = 2,605):
 
-| Estimator | 1940s | 1950s | 1960s | 1970s | 1980s | 1990s | 2000s | 2010s |
+| Sample | 1940s | 1950s | 1960s | 1970s | 1980s | 1990s | 2000s | 2010s |
 |---|---|---|---|---|---|---|---|---|
-| **Revenue-weighted** | 2 | 0 | 0 | 1 | 1 | 2 | **4** | **4** |
-| Unweighted | 0 | 0 | 0 | 1 | 1 | 1 | 2 | 4 |
+| **All measures** | 0 | 0 | 0 | 0 | 1 | 2 | **4** | 3 |
+| Exogenous only | 2 | 0 | 0 | 1 | 1 | 2 | 4 | 4 |
+| Endogenous only | 0 | 0 | 0 | 0 | 1 | 2 | **1** | 3 |
 
-Measures that once took effect in the quarter they were announced now take a full year.
+Measures that once took effect in the quarter they were announced now take a year.
+
+**The exogenous/endogenous split is a result, not a filter.** In the 2000s, structural (exogenous)
+measures took four quarters while countercyclical (endogenous) ones took one. Governments did not
+lose the ability to act quickly; the slowdown is specific to non-cyclical tax policy.
+
+Paper 1 does **not** restrict to exogenous measures. Exogeneity is an identifying restriction for
+causal estimation (Paper 2). A descriptive question about how long the policy process takes has no
+endogeneity to purge, and imposing the restriction would discard 41% of Cloyne's datable measures and
+69% of the modern ones for no methodological gain. It would also drop corporation tax and business
+rates from the instrument map entirely, and force reliance on Cloyne's disclaimed Group column.
 
 **Two reporting choices matter, and both were arrived at by testing rather than assumption.**
 
@@ -39,8 +50,8 @@ codings to the same answer.
 
 Separately, for 2004-2018 where multi-year profiles exist, the average measure delivers **40%** of its
 full effect in its first year of operation, and the profile differs sharply by instrument. That figure
-is computed on measures with a complete ten-year window; including truncated windows inflates it to
-43%, because a censored peak makes the first year look larger than it is.
+is computed on the 226 measures with a complete ten-year window; including truncated windows inflates
+it to 43%, because a censored peak makes the first year look larger than it is.
 
 ## Repository layout
 

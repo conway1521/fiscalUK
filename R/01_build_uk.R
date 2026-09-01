@@ -25,37 +25,72 @@ if (length(hh) != nrow(cls) ||
     !identical(as.character(sup$measure[hh]), as.character(cls$measure))) {
   stop("Row alignment between NarrativeClassif and UK_classification has broken.")
 }
-msg("household rows aligned: %d", length(hh))
+msg("household rows aligned: %d of %d total", length(hh), nrow(sup))
 
-# --- reconcile classification ------------------------------------------------
-stale <- sum(sup$endo_exo[hh] == "NA", na.rm = TRUE)
-msg("stale 'NA' endo_exo rows in superset, resolved from UK_classification: %d", stale)
-
+# --- build ALL measures, not just the household subset -----------------------
+#
+# Paper 1 asks how long the policy process takes. That is descriptive, so it has
+# no endogeneity to purge and no reason to drop the 296 firm/other measures
+# whose exogeneity was never coded. Restricting to exogenous households would
+# discard 74% of the modern sample for no methodological gain, and would lose
+# corporation tax and business rates from the instrument map entirely.
+#
+# Exogeneity is still carried, because Paper 2 needs it and because the
+# exogenous/endogenous contrast is itself a Paper 1 result.
 d <- data.frame(
-  id          = seq_along(hh),
-  row_super   = hh,
-  event       = as.character(cls$event),
-  measure     = fix_encoding(as.character(cls$measure)),
-  tax_type    = tidy_tax_type(as.character(cls$tax_type)),
-  endo_exo    = as.character(cls$endo_exo),
-  minor       = as.character(sup$minor1[hh]),
-  reason      = as.character(cls$reason),
-  quote       = as.character(cls$quote),
-  cloyne_note = as.character(cls$`Cloyne diff`),
+  id          = seq_len(nrow(sup)),
+  row_super   = seq_len(nrow(sup)),
+  event       = as.character(sup$event),
+  measure     = fix_encoding(as.character(sup$measure)),
+  tax_type    = tidy_tax_type(as.character(sup$tax_type)),
+  endo_exo    = as.character(sup$endo_exo),
+  minor       = as.character(sup$minor1),
+  reason      = NA_character_,
+  quote       = NA_character_,
+  cloyne_note = NA_character_,
+  target      = as.character(sup$target),
   stringsAsFactors = FALSE
 )
+
+# Overwrite the household rows from the authoritative file. NarrativeClassif is
+# stale for 34 of them (literal "NA" strings in endo_exo).
+stale <- sum(sup$endo_exo[hh] == "NA", na.rm = TRUE)
+d$endo_exo[hh]    <- as.character(cls$endo_exo)
+d$reason[hh]      <- as.character(cls$reason)
+d$quote[hh]       <- as.character(cls$quote)
+d$cloyne_note[hh] <- as.character(cls$`Cloyne diff`)
+d$endo_exo[!(d$endo_exo %in% c("X", "N"))] <- NA_character_   # "NA" string -> real NA
+msg("stale 'NA' endo_exo rows resolved from UK_classification: %d", stale)
+msg("exogeneity coded: %d of %d rows (firm measures were never coded)",
+    sum(!is.na(d$endo_exo)), nrow(d))
 d$group <- map_group(d$tax_type)
-d$target <- "H"
 
 if (any(is.na(d$group))) {
   warning("unmapped tax types: ", paste(unique(d$tax_type[is.na(d$group)]), collapse = ", "))
 }
 
 # --- dates ------------------------------------------------------------------
-d$announce  <- excel_date(cls$announce)
-d$implement <- excel_date(cls$implement)
-d$stop      <- excel_date(cls$stop)
-d$budget_date <- as.Date(sup$budg_date[hh])
+# Dates come from the superset, overridden by UK_classification for household
+# rows. The two never disagree where both carry a date (0 conflicts in 321
+# announce and 318 implement comparisons), but UK_classification is more
+# complete: it supplies 11 announce and 11 implement dates the superset lacks.
+d$announce  <- excel_date(sup$announce)
+d$implement <- excel_date(sup$implement)
+d$stop      <- excel_date(sup$stop)
+d$budget_date <- as.Date(sup$budg_date)
+
+ca <- excel_date(cls$announce); ci <- excel_date(cls$implement); cs <- excel_date(cls$stop)
+conflict <- sum(!is.na(ca) & !is.na(d$announce[hh])  & ca != d$announce[hh]) +
+            sum(!is.na(ci) & !is.na(d$implement[hh]) & ci != d$implement[hh])
+if (conflict > 0) stop(sprintf("date sources conflict on %d household rows", conflict))
+fill <- function(target, idx, src) {
+  v <- as.numeric(target)
+  v[idx] <- ifelse(is.na(src), v[idx], as.numeric(src))
+  as.Date(v, origin = "1970-01-01")
+}
+d$announce  <- fill(d$announce,  hh, ca)
+d$implement <- fill(d$implement, hh, ci)
+d$stop      <- fill(d$stop,      hh, cs)
 
 aq <- assign_quarter(d$announce,  "calendar"); d$ann_year_cal <- aq$year; d$ann_q_cal <- aq$quarter
 iq <- assign_quarter(d$implement, "calendar"); d$imp_year_cal <- iq$year; d$imp_q_cal <- iq$quarter
@@ -91,7 +126,7 @@ msg("reversal rows: %d   rows with stop date: %d", sum(d$is_reversal), sum(d$has
 # Anchor on the IMPLEMENTATION fiscal year, not the first non-missing costing.
 # Only 39 of 165 coincide: OBR scorecards begin in the Budget year, so aligning
 # on first-non-missing measures the announcement year and understates year one.
-TX <- as.matrix(tax[hh, ]); mode(TX) <- "numeric"
+TX <- as.matrix(tax); mode(TX) <- "numeric"
 colnames(TX) <- FY
 H <- 10L
 
@@ -152,11 +187,20 @@ d$year1_share <- prof_norm[, 1]
 # `usable`        : the lag sample. Profile quality is irrelevant here.
 # `profile_usable`: the phase-in sample. Excludes sign-flipping measures, whose
 #                   normalised profiles are not averageable.
-d$usable <- d$endo_exo == "X" & !d$is_reversal &
+# `timing_sample`: Paper 1. Every datable, non-reversal measure. Exogeneity is
+#                  irrelevant to a descriptive question about the policy process,
+#                  and requiring it would discard 74% of the modern rows.
+# `usable`       : Paper 2. Exogenous household measures only, because a causal
+#                  estimate does need the identifying restriction.
+# `profile_usable`: phase-in analysis. Excludes sign-flipping costings, whose
+#                  normalised profiles are not averageable.
+d$timing_sample <- !d$is_reversal &
   !is.na(d$announce) & !is.na(d$implement) & !is.na(d$peak_value)
-d$profile_usable <- d$usable & !d$sign_flip
+d$usable <- d$timing_sample & d$endo_exo %in% "X" & d$target %in% "H"
+d$profile_usable <- d$timing_sample & !d$sign_flip
 
-msg("exogenous: %d | clean exogenous (lag sample): %d", sum(d$endo_exo == "X"), sum(d$usable))
+msg("timing sample (Paper 1, all measures): %d", sum(d$timing_sample))
+msg("exogenous household sample (Paper 2): %d", sum(d$usable))
 msg("  excluded from the PROFILE sample:")
 msg("    sign-flipping costings: %d", sum(d$usable & d$sign_flip))
 msg("  profile sample: %d, of which full 10-year window: %d",
