@@ -1,0 +1,65 @@
+# 02_build_cloyne.R ----------------------------------------------------------
+# Cloyne (2013, American Economic Review) UK narrative dataset, 1945-2009.
+#
+# Note the asymmetry with the modern data: Cloyne records ONE revenue figure per
+# measure, not a multi-year profile. So the chained series supports the
+# anticipation-lag analysis back to 1945 but the phase-in analysis only from
+# 2004. This is a property of the source, not something we can engineer around.
+
+source("R/00_setup.R")
+
+msg("== 02_build_cloyne ==")
+
+cl <- rx(file.path(DATA, "CloyneNarrativeDataset-2.xlsx"), sheet = "TaxData")
+
+c_group <- trimws(as.character(cl$Group))
+c_group[c_group == "capital"] <- "Capital"       # single lower-case stray
+c_group[c_group == "?"] <- NA_character_
+
+d <- data.frame(
+  id        = seq_len(nrow(cl)),
+  event     = format(as.Date(cl$Date), "%Y-%m-%d"),
+  measure   = as.character(cl$`Description (as reported in FSBR)`),
+  tax_type  = trimws(as.character(cl$`Tax Type`)),
+  sub_type  = trimws(as.character(cl$`Sub Type`)),
+  group     = c_group,
+  endo_exo  = trimws(as.character(cl$Major)),
+  minor     = trimws(as.character(cl$Minor)),
+  excluded  = as.integer(cl$Excluded),
+  stringsAsFactors = FALSE
+)
+
+d$budget_date <- as.Date(cl$Date)
+d$announce    <- excel_date(cl$AnnouncementDate)
+d$implement   <- excel_date(cl$ImplementationDate)
+d$stop        <- excel_date(cl$EndDate)
+
+aq <- assign_quarter(d$announce,  "calendar"); d$ann_year_cal <- aq$year; d$ann_q_cal <- aq$quarter
+iq <- assign_quarter(d$implement, "calendar"); d$imp_year_cal <- iq$year; d$imp_q_cal <- iq$quarter
+fq <- assign_quarter(d$implement, "fiscal");   d$imp_year_fis <- fq$year; d$imp_q_fis <- fq$quarter
+
+d$lag_months  <- as.numeric(d$implement - d$announce) / 30.4375
+d$imp_fy      <- fiscal_year(d$implement)
+d$peak_value  <- as.numeric(cl$TaxData)          # GBP million, single figure
+d$is_reversal <- grepl("^\\s*REVERSE", d$measure, ignore.case = TRUE)
+d$has_stop    <- !is.na(d$stop)
+
+# Cloyne has no household/firm target field. The closest harmonised concept is
+# his Group: everything other than "Business" is household-relevant. The modern
+# data maps to the same categories via map_group().
+d$target <- ifelse(is.na(d$group), NA_character_,
+                   ifelse(d$group == "Business", "F", "H"))
+
+d$usable <- d$endo_exo == "X" & !is.na(d$endo_exo) & d$excluded == 0 &
+  !d$is_reversal & !is.na(d$announce) & !is.na(d$implement) & !is.na(d$peak_value)
+
+msg("rows: %d  |  exogenous: %d  |  excluded flagged: %d",
+    nrow(d), sum(d$endo_exo == "X", na.rm = TRUE), sum(d$excluded != 0))
+msg("clean exogenous (any target): %d  |  of which household-relevant: %d",
+    sum(d$usable), sum(d$usable & d$target == "H", na.rm = TRUE))
+msg("date range: %s to %s", format(min(d$budget_date, na.rm = TRUE)),
+    format(max(d$budget_date, na.rm = TRUE)))
+
+saveRDS(d, file.path(DERIVED, "cloyne_measures.rds"))
+write.csv(d, file.path(DERIVED, "cloyne_measures.csv"), row.names = FALSE)
+msg("written: data-derived/cloyne_measures.{rds,csv}")

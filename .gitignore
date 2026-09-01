@@ -1,0 +1,5 @@
+data-derived/
+output/
+.Rhistory
+.RData
+.Rproj.user/
