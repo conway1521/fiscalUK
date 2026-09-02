@@ -302,15 +302,35 @@ Local tests, eight years either side of each candidate:
 autumn-minus-spring gap runs +0.21, +0.17 and −0.03 across the last three decades, so the calendar
 channel closes while the level keeps rising. Earlier decades have too few autumn measures to report.
 
-**The institutional record.** Lamont announced the unified Budget on 10 March 1992 and it first ran on
-30 November 1993 under Clarke. Budget 2010 paragraph 1.64 set out predictability, stability and
-simplicity as objectives, accompanied by *Tax policy making: a new approach* (HM Treasury and HMRC,
-June 2010), followed by the consultation response of 9 December 2010 and the Tax Consultation
-Framework of 31 March 2011. The 2016 move to a single fiscal event was justified as improving
-"external and Parliamentary scrutiny". The Treasury's stated target is that "most policies will be
-announced at least 16 months before they come into effect at the start of the next tax year".
+**The institutional record.** All quotations below were verified against the source documents on
+3 September 2026; see `SOURCES.md` for method and status.
 
-Full citations and verification status in `SOURCES.md`.
+Lamont announced the reform in the Budget Statement of 10 March 1992 (HC Deb vol 205, c745): "I
+therefore intend that next year's Budget will be the last spring Budget. From then on the annual
+Budget will be in December, and it will cover not just taxation but also public expenditure." He
+added that "the 1994 Finance Bill will be presented to the House in January rather than April",
+which moved the legislative timetable as well as the announcement. The date was brought forward to
+November in the Budget Statement of 16 March 1993 (vol 221, cc169-96), and the first unified Budget
+was delivered by Clarke on 30 November 1993 (vol 233, cc921-41). Brown returned the Budget to spring
+in the statement of 2 July 1997 (vol 297, cc303-16).
+
+Budget 2010 (HC 61, paragraph 1.64) set out predictability, stability and simplicity as objectives
+and announced proposals "to improve the way tax policy is made to support these objectives",
+accompanied by *Tax policy making: a new approach* (HM Treasury and HMRC, June 2010). The
+consultation response followed on 9 December 2010, when the Exchequer Secretary told the House that
+"confirming the majority of intended tax changes at least three months ahead of publication of the
+Bill supports predictability in the tax system and provides an opportunity for draft legislation to
+be properly scrutinised". The Tax Consultation Framework followed on 31 March 2011.
+
+The 2016 move to a single fiscal event was made "to promote certainty and simplicity within the tax
+system" and justified on the ground that it "will improve both external and Parliamentary scrutiny of
+proposed tax measures". The Treasury's stated target, from *The new Budget timetable and the tax
+policy making process* (6 December 2017), is that "most policies will be announced at least 16 months
+before they come into effect at the start of the next tax year".
+
+Read together, the stated objectives across 1992, 2010, 2016 and 2017 are parliamentary and external
+scrutiny, predictability, stability, certainty, simplicity, and time for stakeholders to comment. None
+is macroeconomic.
 
 ---
 
@@ -349,5 +369,10 @@ flags two unverified items.
 **Known limitations to state in the paper.** The outcome definition was chosen after seeing results on
 alternatives. The exogeneity classification agrees across the two codings on 78.3% of matched
 measures in the overlap, with a systematic divergence on anti-avoidance that affects Paper 2 rather
-than Paper 1. The election result is fragile. Institutional quotations were retrieved through an
-automated fetch and must be checked at source before submission.
+than Paper 1. The election result is fragile.
+
+**Institutional quotations are verified** against source documents (`SOURCES.md`, 3 September 2026).
+Two carry caveats. The command number of the 1992 budgetary reform White Paper could not be
+confirmed and is omitted; cite the White Paper on Lamont's own words instead. The 9 December 2010
+ministerial statement was verified through the Internet Archive because Parliament's publications
+site refuses direct requests, and should be confirmed against Hansard in a library.
