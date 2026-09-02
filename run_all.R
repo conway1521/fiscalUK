@@ -16,5 +16,7 @@ source("R/03_chain.R")         # chain + overlap validation gate (needs 04's tax
 source("R/05_series.R")        # quarterly shock series, 1945Q1-2018Q4
 source("R/06_analysis.R")      # Paper 1 results on the 120-day outcome
 source("R/07_figures.R")       # Paper 1 figures
+source("R/08_robustness.R")    # seam tests, anticipation share, break dating
+source("R/09_shock_split.R")   # anticipated/unanticipated series for Paper 2
 
 cat("\nDone. Outputs in data-derived/ and output/.\n")
