@@ -169,3 +169,61 @@ levels. The "poorer households get less warning" story is at its weakest today.
 3. **Decide how to present the specification history.** Outcome, weighting and three test designs all
    changed after seeing results. Two changes have defences independent of the results; the Q5 step
    dating does not.
+
+---
+
+## 5. RESULTS ON THE ADOPTED PRIMARY OUTCOME (`long`, 120+ days)
+
+Decision taken 2 September 2026: `long` is primary. `deferred` and `lag_quarters` are robustness.
+All inference unweighted, clustered on Budget event. Reproduced by `R/06_analysis.R`.
+
+**FACT 1 — the trend.** Share of measures with a 120+ day gap:
+
+| 1940s | 1950s | 1960s | 1970s | 1980s | 1990s | 2000s | 2010s |
+|---|---|---|---|---|---|---|---|
+| 0.162 | 0.039 | 0.129 | 0.182 | 0.145 | 0.363 | 0.393 | **0.646** |
+
+Flat through the 1980s, sustained rise from the 1990s. No institutional break survives (see §1, Q5).
+
+**FACT 2 — instrument, within Budget.** Budget-event fixed effects, relative to excise duties.
+Joint F = 11.7 on 10 df, p = 8.6e-20. R² 0.274 (Budget FE) to 0.314 (+ instrument).
+
+| Social security | Property recurrent | Income | VAT | Capital gains |
+|---|---|---|---|---|
+| **+0.385** (z 7.5) | +0.148 (z 2.0) | **+0.128** (z 3.5) | +0.096 (z 2.3) | **−0.112** (z −3.3) |
+
+Corporate, oil, property transaction, inheritance and other are not significant.
+
+**FACT 3 — the mechanism, and its limit.** Among measures pinned to early April, the long-gap rate
+is **0.32 after a spring Budget and 0.86 after an autumn one** (+0.365, z = 5.14, n = 1,050). The
+fiscal-year clock produces a long gap only when the Budget falls late in the year.
+
+But it explains cross-section, not trend: adding calendar controls lifts R² from 0.155 to 0.214 and
+absorbs only **9%** of the 2010s decade effect.
+
+**FACT 4 — elections.** Share whose implementation lands after the next election, for measures
+announced 6-24 months before it: cuts 0.024, rises 0.101. Within-Budget +0.064 (z = 2.07, p = 0.038),
+n = 719 across 47 events.
+
+**NEGATIVE — crises.** Endogenous +0.044 (p = 0.58), exogenous +0.071 (p = 0.65). Both positive,
+neither significant. Crises do not speed policy up.
+
+### R6. Sixth retraction
+
+**"Parameter changes are inherently slower, and this is the mechanism." FALSE on the primary
+outcome.** It holds on `deferred` (+0.541, z = 10.18) but not on `long` (+0.042, p = 0.46). Parameter
+changes are pinned to 6 April, which crosses the fiscal-year boundary but is often a three-week wait
+from a March Budget. The mechanism survives only in the conditional form recorded as Fact 3.
+
+## 6. Figures
+
+`R/07_figures.R` writes six figures to `output/figures/`:
+
+| File | Content |
+|---|---|
+| `fig0_gap_distribution` | Gap histogram, justifying the 120-day threshold |
+| `fig1_trend` | Fact 1, five-year blocks |
+| `fig2_instruments` | Fact 2, coefficient plot with clustered 95% CIs |
+| `fig3_mechanism` | Fact 3, April-pinned measures by Budget season |
+| `fig3b_clock_migration` | 6 April to 1 April migration, by decade |
+| `fig4_elections` | Fact 4, rises vs cuts landing after the election |

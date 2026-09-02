@@ -21,7 +21,8 @@ keep <- c("event","measure","tax_type","group","target","endo_exo","minor",
           "budget_date","announce","implement","stop","lag_months","lag_quarters","is_retro","imp_fy",
           "peak_value","is_reversal","usable","timing_sample",
           "ann_year_cal","ann_q_cal","imp_year_cal","imp_q_cal","imp_year_fis","imp_q_fis",
-          "imp_year_nret","imp_q_nret","tax_h")
+          "imp_year_nret","imp_q_nret","tax_h",
+          "days","long","fy_gap","deferred","far","imp_day","on_budget_day","fy_boundary")
 
 # Cloyne's tax_h comes from 04_cloyne_taxtype.R (the salvage). The modern
 # coding is ours and maps directly. NEVER recompute Cloyne's tax_h here from
