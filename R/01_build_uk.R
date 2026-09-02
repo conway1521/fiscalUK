@@ -112,6 +112,21 @@ d$lag_quarters <- pmax(0, 4 * (d$imp_year_cal - d$ann_year_cal) +
 d$is_retro     <- (4 * (d$imp_year_cal - d$ann_year_cal) +
                       (d$imp_q_cal - d$ann_q_cal)) < 0
 
+# --- canonical timing outcomes ---------------------------------------------
+# PRIMARY OUTCOME is `long` (gap of 120+ days). See RESULTS.md section 0.
+# `deferred` (later fiscal year) is retained for robustness but is partly
+# artefactual: 34% of its positives are under 60 days, being a March Budget
+# implementing on 6 April, and that share drifts from 0.72 in the 1980s to
+# 0.11 in the 2010s, so the measure's meaning changes across the sample.
+d$days     <- as.numeric(d$implement - d$announce)
+d$long     <- as.integer(d$days >= 120)
+d$fy_gap   <- pmax(0, fiscal_year(d$implement) - fiscal_year(d$announce))
+d$deferred <- as.integer(d$fy_gap >= 1)
+d$far      <- as.integer(d$fy_gap >= 2)
+d$imp_day  <- format(d$implement, "%m-%d")
+d$on_budget_day <- as.integer(d$implement == d$budget_date)
+d$fy_boundary   <- as.integer(d$imp_day %in% c("04-01","04-05","04-06","04-07"))
+
 msg("dates parsed: announce %d NA, implement %d NA", sum(is.na(d$announce)), sum(is.na(d$implement)))
 
 # --- reversals ---------------------------------------------------------------
