@@ -596,10 +596,19 @@ obliges another researcher to change what they do.
 **What closing means, and what it does not.** The results are settled. Three things remain before
 submission and are writing or verification tasks, not analysis:
 
-1. Check every institutional quotation in `SOURCES.md` against the original document. They were
-   retrieved through an automated fetch. Two items are flagged UNVERIFIED: the command number of the
-   1992 budgetary reform White Paper, and the draft-clause lead-time wording in the 9 December 2010
-   ministerial statement.
+1. ~~Check every institutional quotation against the original document.~~ **DONE 3 September 2026.**
+   All quotations verified against raw source text (Hansard fetched and string-matched, Budget 2010
+   parsed from the PDF, GOV.UK pages fetched). Volume and column references now recorded. Three
+   outcomes worth noting:
+   - **A misattribution was caught.** "The first unified Budget this century" was said by Rhodri
+     Morgan, an opposition backbencher, in the debate following the 30 November 1993 Budget. Clarke's
+     own statement never uses the word "unified". Do not attribute it to the Government.
+   - **The 9 December 2010 statement is verified** (David Gauke: measures confirmed "at least three
+     months ahead of publication of the Bill"), via the Internet Archive, because Parliament's
+     publications site returns 403. Confirm against Hansard in a library before submission.
+   - **The White Paper command number could not be verified.** No Cm number appears in the Hansard
+     record. Cm 1867 is dropped from the paper; the White Paper is cited on Lamont's own words
+     ("I am publishing today a White Paper on the mechanics of this change").
 2. Position against the fiscal foresight literature in the first two pages. Leeper, Walker and Yang
    (2013), Mertens and Ravn, Romer and Romer (2010), Cloyne (2013). Without this a referee says the
    result is already known. Full citations must be added; the draft names them only.
