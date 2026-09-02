@@ -622,3 +622,39 @@ unobservable in this source.
 **Paper 2 inherits** the split shock series (`output/uk_tax_shocks_split.csv`), the constraints in
 §8.3 and the memory `fiscaluk-paper2-constraints`, and the anti-avoidance coding divergence in §8.2,
 which is to be handled as robustness rather than by recoding.
+
+---
+
+# 12. A COMPETING DATASET (found 3 September 2026, during literature verification)
+
+While verifying references for the literature section, Crossref returned work that changes the
+competitive position and must be addressed before submission.
+
+**Cloyne's team has extended the UK narrative record to a century.**
+
+- Cloyne, Dimsdale and Postel-Vinay (2023), *Review of Economic Studies*, extend the narrative
+  account back into interwar Britain.
+- Hürtgen, Cloyne, Dimsdale and Postel-Vinay (2024), SSRN 4909051, publish **"Tax Changes in the
+  United Kingdom 2009-2020: A New Narrative Account and Dataset"**.
+- Cloyne, Hürtgen and Dimsdale (2025), *Journal of Political Economy* 133(2), 568-603, use a
+  roughly 1918-2020 UK narrative dataset.
+
+**Why this matters.**
+
+1. **Overlap.** Their 2009-2020 extension overlaps our own 2004-2018 coding. A referee will ask why we
+   coded our own rather than using theirs. Our coding predates the extension, which is a real answer,
+   but it has to be stated rather than left implicit.
+2. **Opportunity, and possibly a large one.** If their extension records announcement dates as
+   Cloyne's original does, then the modern half of Paper 1 could be rebuilt or cross-validated on an
+   independent, peer-reviewed coding. That would dispose of the seam question for the recent period
+   entirely, and could extend the sample to 2020. The interwar data could extend it backwards.
+3. **Urgency.** A team holding a century-long UK narrative dataset, publishing in the JPE, could run
+   the anticipation-content exercise in this paper without difficulty. The measurement contribution
+   here is not protected. This argues for moving quickly rather than polishing.
+
+**Action before submission.** Obtain the 2024 dataset and check whether it carries announcement dates.
+If it does, cross-validate our 2004-2018 coding against it exactly as §7.1 cross-validated against
+Cloyne's original, and report the agreement. If it does not, say so, because that absence is itself
+the justification for our own coding and turns a weakness into the paper's reason for existing.
+
+This does not change any result in §1 to §10.

@@ -93,6 +93,63 @@ quiet abandonment of announced policy: expiry dates in a scorecard record pre-an
 later changes of mind. Claims about the delivery of announced tax policy must be confined to scored,
 dated commitments.
 
+### Relation to the literature
+
+The narrative tradition in fiscal policy has always recorded the dates this paper studies, and has
+always used them for something else. Romer and Romer (2010) identify legislated US tax changes from
+the contemporaneous record, code their motivation, and date them by when they take effect, and
+Cloyne (2013) builds the corresponding UK account for 1945 to 2009. That record has since been
+extended in both directions, back into the interwar period by Cloyne, Dimsdale and Postel-Vinay
+(2023) and forward to 2020 by Hürtgen, Cloyne, Dimsdale and Postel-Vinay (2024), so that a
+narrative account of British tax policy now spans roughly a century and has been used at that length
+by Cloyne, Hürtgen and Dimsdale (2025). In all of this work the implementation date is a dating
+convention, an input to the construction of a shock series rather than a quantity of interest, and
+the announcement date enters, when it enters at all, as the means of separating measures that were
+foreseen from measures that were not.
+
+The foresight literature takes the same dates and asks a sharper question of them, which is whether
+anticipation invalidates the identification. Yang (2005) shows that policy foresight changes the
+dynamic response to a tax change, Leeper, Walker and Yang (2013) establish that foresight places the
+econometrician behind the agent's information set and that the resulting representation is
+non-invertible, so that the shock cannot be recovered from the observed series in the usual way, and
+Mertens and Ravn (2011, 2012) construct separate anticipated and unanticipated US tax series in
+order to estimate their effects apart. Ramey (2011) makes the parallel argument for government
+spending, that the timing of the news rather than the timing of the outlay is what identifies the
+shock. Favero and Giavazzi (2012) and Alesina, Favero and Giavazzi (2015) go further towards the
+policy process itself, the latter treating fiscal consolidations as multi-year plans with announced
+and unexpected components rather than as sequences of independent measures, which is the closest
+existing treatment to the one taken here.
+
+What these two bodies of work share is the level at which anticipation is handled. In both, foresight
+is a property of an individual measure, to be recorded, corrected for, or modelled, and the
+correction is applied measure by measure within a sample that is treated as homogeneous. Neither
+assembles the anticipation of individual measures into a property of the policy regime, and neither
+asks how much of it there is in a given decade, whether it falls disproportionately on particular
+instruments, or whether the quantity has moved over the life of the sample. The assumption that it
+has not moved is nowhere defended, because it is nowhere stated.
+
+Set against that is a second literature, entirely separate, which does treat the timing of tax
+policy as its subject and treats it as procedure. The reform of the Budget process is documented in
+the parliamentary record and in the Treasury's own accounts of how tax policy is made, from the
+unification of the Budget and the Autumn Statement announced in 1992 through the consultation
+framework of 2010 and 2011 to the single fiscal event of 2016, and that record is explicit about
+lead times, to the point of stating a target of sixteen months from announcement to effect. It is
+not, however, in any conversation with the macroeconomic literature. The documents justify longer
+lead times by reference to parliamentary scrutiny and to the predictability of the tax system, and
+they contain no assessment of what a longer lead time does to the transmission of a fiscal impulse,
+because that is not the question they were written to answer.
+
+The gap this paper occupies lies between the two. The macroeconomic literature has established that
+foresight matters and has built the tools to handle it, one measure at a time and within a sample
+assumed to be stationary in this respect. The institutional record has established that the process
+generating foresight was deliberately reformed, twice, and says nothing about the consequence. What
+has not been done is to measure the foresight itself as a time series, to ask whether it is
+systematically distributed, and to connect its movement to the reforms that produced it. That is the
+object of this paper, and the finding that motivates the rest of it is that the quantity is neither
+small nor stationary: the share of the British tax impulse arriving with more than four months'
+notice has risen from roughly a fifth to roughly four fifths, and the unanticipated component has
+fallen by about five to one. A sample assumed homogeneous in its anticipation content is not.
+
 The paper proceeds as follows. Section 2 describes the data and the chaining, and reports the tests
 that establish the trend is not an artefact of joining two sources. Sections 3 to 6 present the
 trend, the instrument gradient, the calendar mechanism and the election result. Section 7 reports the
@@ -360,6 +417,51 @@ content of fiscal policy. That consequence appears in no document justifying the
 
 ---
 
+## References
+
+Verified against Crossref, 3 September 2026. Working-paper versions exist for several of these and
+are not listed; cite the published version.
+
+Alesina, A., Favero, C. and Giavazzi, F. (2015). The output effect of fiscal consolidation plans.
+*Journal of International Economics*.
+
+Cloyne, J. (2013). Discretionary tax changes and the macroeconomy: new narrative evidence from the
+United Kingdom. *American Economic Review*, 103(4), 1507-1528.
+
+Cloyne, J., Dimsdale, N. and Postel-Vinay, N. (2023). Taxes and growth: new narrative evidence from
+interwar Britain. *Review of Economic Studies*.
+
+Cloyne, J., Hürtgen, P. and Dimsdale, N. (2025). Are tax cuts contractionary at the zero lower
+bound? Evidence from a century of data. *Journal of Political Economy*, 133(2), 568-603.
+
+Favero, C. and Giavazzi, F. (2012). Measuring tax multipliers: the narrative method in fiscal VARs.
+*American Economic Journal: Economic Policy*.
+
+Hürtgen, P., Cloyne, J., Dimsdale, N. and Postel-Vinay, N. (2024). Tax changes in the United
+Kingdom 2009-2020: a new narrative account and dataset. SSRN working paper 4909051.
+
+Leeper, E. M., Walker, T. B. and Yang, S.-C. S. (2013). Fiscal foresight and information flows.
+*Econometrica*, 81(3). doi:10.3982/ecta8337.
+
+Mertens, K. and Ravn, M. O. (2011). Understanding the aggregate effects of anticipated and
+unanticipated tax policy shocks. *Review of Economic Dynamics*.
+
+Mertens, K. and Ravn, M. O. (2012). Empirical evidence on the aggregate effects of anticipated and
+unanticipated US tax policy shocks. *American Economic Journal: Economic Policy*.
+
+Ramey, V. A. (2011). Identifying government spending shocks: it's all in the timing. *Quarterly
+Journal of Economics*.
+
+Romer, C. D. and Romer, D. H. (2010). The macroeconomic effects of tax changes: estimates based on a
+new measure of fiscal shocks. *American Economic Review*.
+
+Yang, S.-C. S. (2005). Quantifying tax effects under policy foresight. *Journal of Monetary
+Economics*.
+
+Primary documents are listed in `SOURCES.md` with verification status.
+
+---
+
 ## Appendix: reproduction and caveats
 
 `run_all.R` rebuilds everything. `RESULTS.md` logs eight retractions, the seam tests, the bug review
@@ -370,6 +472,14 @@ flags two unverified items.
 alternatives. The exogeneity classification agrees across the two codings on 78.3% of matched
 measures in the overlap, with a systematic divergence on anti-avoidance that affects Paper 2 rather
 than Paper 1. The election result is fragile.
+
+**A competing dataset now exists and must be addressed.** Hürtgen, Cloyne, Dimsdale and Postel-Vinay
+(2024) extend the UK narrative account to 2009-2020, and Cloyne, Hürtgen and Dimsdale (2025) use a
+century-long version of it in the *Journal of Political Economy*. Our own coding of 2004-2018
+predates that extension and overlaps it. A referee will ask why we did not use theirs. Before
+submission we must state the answer, and should if possible cross-validate the modern half against
+their coding, which would remove the seam question for the recent period entirely and could extend
+the sample to 2020. See the note in `RESULTS.md` §12.
 
 **Institutional quotations are verified** against source documents (`SOURCES.md`, 3 September 2026).
 Two carry caveats. The command number of the 1992 budgetary reform White Paper could not be
