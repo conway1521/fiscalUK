@@ -172,3 +172,29 @@ These five are not five papers. Realistically:
   `Historical_official_forecasts_database_October_2021.xlsx`. Different data, different method,
   genuinely separable.
 - **Paper 2** = multipliers and distribution, as already planned.
+
+---
+
+# POST-TESTING NOTE (2 September 2026)
+
+All five questions have been tested, then adversarially re-tested twice. **The verdicts in this
+document's original text are superseded.** See [RESULTS.md](RESULTS.md) for what actually held,
+what was retracted, and a methodology warning that must be read before any drafting.
+
+Summary of what changed and why:
+
+- The first pass returned five REDs. Four of them were **my methodological error**, not absent
+  effects: revenue weighting collapsed the effective sample from 2,252 to 251, and the pre-specified
+  outcome had 42% of its mass at zero.
+- Q1 was first operationalised as "is the lag longer at pre-election Budgets" rather than "do rises
+  land after the election", which is what this document actually claims. Corrected, it holds.
+- Q4 flipped from RED to the paper's central result, then had its magnitude cut roughly in half once
+  a fiscal-year-boundary artefact was removed from the outcome.
+- Hypothesis B (rate versus structural) reversed sign when Cloyne's own sub-type labels replaced a
+  text classifier, and in reversing supplied the mechanism behind Q4.
+- Q2 and Q3 are dead, and were re-tested to the same standard as the positives before being called.
+
+**Lesson for the write-up.** Pre-specification is necessary but was not sufficient here. The tests
+were pre-specified; the *outcome variable and the weighting* were not adequately diagnosed first.
+Running the degeneracy checks in §0 of RESULTS.md before writing this document would have prevented
+four false negatives.
