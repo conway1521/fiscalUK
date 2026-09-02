@@ -183,7 +183,10 @@ All inference unweighted, clustered on Budget event. Reproduced by `R/06_analysi
 |---|---|---|---|---|---|---|---|
 | 0.162 | 0.039 | 0.129 | 0.182 | 0.145 | 0.363 | 0.393 | **0.646** |
 
-Flat through the 1980s, sustained rise from the 1990s. No institutional break survives (see §1, Q5).
+Flat through the 1980s, sustained rise from the 1990s. **Superseded in part:** the claim that
+no institutional break survives was made on a data-driven break search over the `deferred`
+outcome. A targeted search on `long` puts the break at 1993, and it is large and significant.
+See §7 and R7.
 
 **FACT 2 — instrument, within Budget.** Budget-event fixed effects, relative to excise duties.
 Joint F = 11.7 on 10 df, p = 8.6e-20. R² 0.274 (Budget FE) to 0.314 (+ instrument).
@@ -202,8 +205,10 @@ But it explains cross-section, not trend: adding calendar controls lifts R² fro
 absorbs only **9%** of the 2010s decade effect.
 
 **FACT 4 — elections.** Share whose implementation lands after the next election, for measures
-announced 6-24 months before it: cuts 0.024, rises 0.101. Within-Budget +0.064 (z = 2.07, p = 0.038),
-n = 719 across 47 events.
+announced 6-24 months before it: cuts 0.031, rises 0.125. Within-Budget +0.075 (z = 2.37, p = 0.018),
+n = 751 across 49 events. *(Updated 3 Sept 2026: the 2019 general election was missing from the date
+list, which silently dropped the 56 measures announced after June 2017. Adding it strengthens the
+result from +0.064, p 0.038.)*
 
 **NEGATIVE — crises.** Endogenous +0.044 (p = 0.58), exogenous +0.071 (p = 0.65). Both positive,
 neither significant. Crises do not speed policy up.
@@ -227,3 +232,384 @@ from a March Budget. The mechanism survives only in the conditional form recorde
 | `fig3_mechanism` | Fact 3, April-pinned measures by Budget season |
 | `fig3b_clock_migration` | 6 April to 1 April migration, by decade |
 | `fig4_elections` | Fact 4, rises vs cuts landing after the election |
+
+---
+
+# 7. SEAM AND ANTICIPATION TESTS (3 September 2026)
+
+Run by `R/08_robustness.R`. Two questions were outstanding before drafting: whether Fact 1 is an
+artefact of the Cloyne-to-modern data join, and whether the timing change matters to the revenue
+impulse rather than only to a count of measures.
+
+## 7.1 The seam is clean. Fact 1 survives.
+
+Six tests, all passed.
+
+| Test | Result |
+|---|---|
+| **Announcement convention** | 91.6% of Cloyne rows and 88.8% of modern rows date announcement to the Budget day itself. Same object. |
+| **2004-09 overlap, same 11 Budgets** | Cloyne 0.460 long, modern 0.496 unweighted; 0.627 against 0.615 revenue-weighted. Paired within-event difference −0.021, t = −0.46. |
+| **Itemisation** | Cloyne splits those Budgets 2.8x more finely (32.0 measures per event against 11.5) and still returns the same long-gap share. |
+| **Weighting** | Trend holds unweighted (0.162 to 0.646), event-level (0.195 to 0.618) and revenue-weighted (0.285 to 0.740). |
+| **Composition** | Holding the 1945-79 instrument mix fixed changes the 2010s rate by 0.019. The rise is within-instrument, not a change in which taxes are used. |
+| **Granularity-proof** | The 20 largest measures of each decade: 0.25, 0.10, 0.20, 0.30, 0.20, 0.70, 0.80, 0.80. Equal count per decade, same result. |
+
+**Decisive:** the post-1990 step is +0.206 (z 5.18) inside Cloyne's coding alone, and +0.175
+(z 4.43) with instrument controls. No seam can produce a break that sits entirely on one side of it.
+
+Retroactivity, the one remaining asymmetry (Cloyne's implementation date includes retroactive
+components, ours does not), moves the decade rates by at most 0.021.
+
+## 7.2 The anticipation share of the impulse
+
+Revenue-weighted share of the tax impulse, dated by implementation, announced 120+ days ahead.
+Measures implementing after 2019 are dropped as end-of-sample long-lead survivors.
+
+| Sample | 1945-79 | 1980-99 | 2000-19 |
+|---|---|---|---|
+| All measures | 0.184 | 0.384 | **0.699** |
+| Household exogenous (the Paper 2 series) | 0.202 | 0.364 | **0.815** |
+
+Revenue-weighted lead time rises from 102 to 322 days (all measures) and 131 to 383 days
+(household exogenous).
+
+**The sharper form.** Splitting the quarterly impulse into foreseen and unforeseen components
+(household exogenous, % of nominal GDP):
+
+| Period | mean abs. foreseen | mean abs. unforeseen | foreseen share |
+|---|---|---|---|
+| 1945-79 | 0.041 | 0.077 | 0.348 |
+| 1980s | 0.049 | 0.083 | 0.373 |
+| 1990-2003 (Cloyne only) | 0.051 | 0.030 | 0.630 |
+| 2004-18 (modern only) | 0.030 | 0.015 | 0.665 |
+
+**What disappeared is the surprise.** The unforeseen impulse falls by a factor of about five on both
+samples, and the standard deviation of the unforeseen series falls from 0.24 to 0.03% of GDP.
+Crucially the collapse happens between the 1980s and 1990-2003, a window that is entirely Cloyne's
+coding, so it cannot be an artefact of the modern data.
+
+**Corrected 3 September 2026 (R8).** An earlier version of this section claimed the foreseen impulse
+had been "the same size for seventy years". It has not. It is flat to 2003 (0.041, 0.049, 0.051) and
+then falls to 0.030. The foreseen *share* still rises monotonically because the unforeseen component
+falls much faster, and that is the claim the evidence supports. The total impulse shrinks too.
+
+Caveat: on the all-measure sample the foreseen share is 0.602 then 0.567 across 2004, so the final
+step appears only on the household exogenous sample. The 1980s-to-1990s collapse appears on both.
+
+**Implication for Paper 2 and for the literature.** A multiplier estimated on a pooled 1945-2018 UK
+narrative series is averaging over two different objects: a pre-1990 impulse that was mostly a
+surprise and a post-2000 one that mostly was not.
+
+## 7.3 The pipeline
+
+Stock of announced-but-not-yet-in-force tax change at each quarter end:
+
+| Period | median % GDP | mean count pending |
+|---|---|---|
+| 1945-79 | 0.026 | 2.0 |
+| 1980s | 0.062 | 4.6 |
+| 1990-2003 | 0.816 | 17.7 |
+| 2004-18 | 0.991 | 26.4 |
+
+Report the median, not the mean: the mean is dominated by VAT, announced March 1971 and in force
+April 1973, which alone put roughly 11% of GDP in the pipeline. That measure is the point in
+miniature. Long pre-announcement was once exceptional enough to be a landmark; it is now routine.
+
+## 7.4 R7. Seventh retraction
+
+**"There is no institutional break; the drift has no identifiable start." FALSE.** A grid search
+over single break dates on the primary outcome maximises fit at **1993** (R² 0.142), and the annual
+series is sharp: 1992 = 0.047, 1993 = 0.372, 1994 = 0.434, 1995 = 0.600. The earlier null came from
+searching on `deferred`.
+
+Local tests, eight years either side of each candidate:
+
+| Candidate | Year | Estimate | z | p |
+|---|---|---|---|---|
+| Unified autumn Budget, first held Nov 1993 | 1993 | **+0.288** | 6.96 | <0.0001 |
+| Return to a spring Budget | 1997 | +0.026 | 0.36 | 0.72 |
+| Tax policy making framework | 2010 | **+0.257** | 3.20 | 0.001 |
+| Draft-clause consultation | 2011 | +0.157 | 1.80 | 0.072 |
+| Single fiscal event | 2017 | +0.108 | 1.20 | 0.23 |
+
+Two steps, 1993 and 2010, both at named reforms of the Budget process.
+
+**This is not purely a calendar effect.** Restricting to spring Budgets only, the trend still runs
+0.143 (1980s) to 0.275 (1990s) to 0.657 (2010s), and the post-1990 step is +0.275 (z 5.56). The
+autumn-minus-spring season gap runs +0.21 (1990s), +0.17 (2000s) and **−0.03 (2010s)**, so the
+calendar channel has closed while the level kept rising. *(Corrected 3 Sept 2026: an earlier version
+quoted a peak gap of 0.357 in the 1980s. That cell rests on **two** autumn measures from a single
+Budget. Autumn Budgets were rare before 1993, so only the 1990s onward are reportable. See
+`output/season_gap.csv`, which now carries cell counts.)*
+
+**Consequence for the framing.** "Fiscal forward guidance by accident, with no institutional break"
+is not supportable. The defensible claim is that lead times lengthened at two deliberate reforms of
+the Budget process, both pursued for scrutiny and legal certainty, and that neither was assessed for
+its consequences for stabilisation or for households. Unchosen consequences of chosen reforms, not
+drift.
+
+**Sourced 3 September 2026. See `SOURCES.md`.** Both reforms are confirmed from Hansard and from
+HM Treasury and HMRC documents. The unified Budget was announced by Lamont on 10 March 1992 ("next
+year's Budget will be the last spring Budget"), brought forward to November on 16 March 1993, and
+first delivered by Clarke on 30 November 1993. The 2010 reform is Budget 2010 para 1.64 and the
+accompanying *Tax policy making: a new approach* (HM Treasury and HMRC, June 2010), with the
+consultation response of 9 December 2010 and the Tax Consultation Framework of 31 March 2011.
+
+Two findings from the sourcing that strengthen the framing:
+
+1. **The Treasury states the lead time as a target.** *The new Budget timetable and the tax policy
+   making process* (HM Treasury and HMRC, 6 December 2017): "most policies will be announced at
+   least 16 months before they come into effect at the start of the next tax year." The paper does
+   not have to infer that lead times lengthened by design; the target is published, and 16 months is
+   far beyond the 120-day threshold.
+2. **No stated rationale is macroeconomic.** Across 1992, 2010, 2016 and 2017 the justifications are
+   parliamentary and external scrutiny, predictability, stability, simplicity, and giving taxpayers
+   time to prepare. Not one document argues about stabilisation, the anticipation content of the
+   fiscal impulse, or households unable to act on notice.
+
+Also note that the 1997 reversion to a spring Budget is the one candidate the tests **reject**
+(+0.026, p 0.72). The Budget moved back but the long-gap share did not, which is further evidence
+that the 1993 step was not purely a calendar effect.
+
+---
+
+# 8. THE SPLIT SHOCK SERIES, AND A BLOCKING DEFECT IN THE PAPER 2 SAMPLE
+
+Built by `R/09_shock_split.R`. Three series, because an anticipated measure is two events:
+`ant_news` dated at announcement, `ant_imp` dated at implementation, and `unant` dated at
+implementation, which is also its announcement. A local projection or proxy-SVAR takes `ant_news`
+and `unant` as separate instruments; `ant_imp` is the same money as `ant_news` moved forward in time
+and must never enter the same regression. Written under two thresholds, the 120-day Paper 1 outcome
+and a 2-quarter rule for quarterly estimation, which agree on 96.6% of measures.
+
+## 8.1 The pooling test fails, and one row is responsible
+
+Section 7.1 cleared the Cloyne-to-modern seam for measure counts. A shock series sums money, so the
+test had to be redone on revenue, using the 2004-09 window where both codings independently record
+the same Budgets.
+
+| Spec | Cloyne | Modern | Correlation |
+|---|---|---|---|
+| As coded | +0.092% GDP | **−0.398% GDP** | **−0.02** |
+| 2007 package made consistent | +0.092% GDP | +0.396% GDP | **0.63** |
+
+Gross revenue agrees to 0.3% and the anticipation share to 0.066 either way. Only the *signed*
+series disagrees, and the cause is a single measure.
+
+**The March 2007 income tax package.** The basic rate was cut from 22p to 20p and the 10p starting
+rate abolished, both announced in the same Budget and both effective 6 April 2008. Cloyne codes both
+exogenous. The modern coding codes the rate cut exogenous (−12,878m) and the starting-rate abolition
+**endogenous** (+11,529m), which drops the offsetting leg from the Paper 2 sample and leaves a
+spurious −0.82% of GDP shock in 2008Q2 where Cloyne has +0.04.
+
+That one row is **13% of all gross revenue in the modern half of the Paper 2 sample**.
+
+**Paper 1 is unaffected.** It runs on `timing_sample`, which ignores exogeneity entirely. Nothing in
+sections 1 to 7 changes.
+
+## 8.2 The audit, adjudicated 3 September 2026
+
+**The 27-group audit was wrong and is withdrawn.** It flagged any Budget event / tax type /
+implementation date group containing both exogenous and endogenous rows. But Cloyne's `Major` (X/N)
+is a **deterministic function** of his `Minor` motive code, in both codings, with zero exceptions:
+
+| Exogenous | Endogenous |
+|---|---|
+| LR (long run), IL (ideological), DC (deficit consolidation), ET | DM (demand management), DR, SD (spending driven), SS |
+
+So a Budget containing a long-run reform and a spending-driven measure on the same day is the
+taxonomy working, not failing. 26 of the 27 were false positives from a coarse grouping key.
+
+**The right test** uses the 2004-09 window, where the same measures are coded twice. Matching on
+measure text within Budget event gives 46 confident matches:
+
+| | Modern N | Modern X |
+|---|---|---|
+| **Cloyne N** | 16 | 8 |
+| **Cloyne X** | 2 | 20 |
+
+**Agreement 78.3% (36 of 46).** Revenue-weighted disagreement is 28.7% of matched gross revenue, but
+**74% of that is the single 2007 row**, which is now overridden. Residual after the override: **7.5%**.
+
+**The 2007 override is now properly justified.** It is not a judgement call. Cloyne codes that exact
+measure exogenous (IL); we coded it endogenous (SD, "spending driven") on the stated reason that it
+"funds parts of the next stage". Under Romer and Romer (2010), which Cloyne (2013) follows,
+spending-driven means offsetting a change in *government spending*. This measure funds a *tax cut*,
+so the category does not apply, and the published peer-reviewed coding takes precedence. Of 49
+modern SD rows with a stated funding rationale, this is the only one that funds a tax measure rather
+than spending.
+
+**The residual disagreement is systematic: anti-avoidance.** Five of the ten disagreements are
+anti-avoidance measures, every one Cloyne endogenous (SD) against ours exogenous (IL). Cloyne codes
+17% of his anti-avoidance rows exogenous; we code 31%. That is a convention difference, not an error,
+and neither convention is wrong.
+
+**Recommendation: do not recode.** The stakes are small, 0.5% of Cloyne's exogenous revenue and 3.3%
+of ours, and overriding a published classification wholesale is worse than documenting the
+divergence. Paper 2 should report results with and without anti-avoidance measures as robustness.
+Anti-avoidance is also a modern phenomenon (0.0% of measures before 1960, 10.8% in the 2000s), so it
+loads on exactly the period where the two codings meet.
+
+Written to `output/exogeneity_audit.csv`.
+
+## 8.3 A second warning for Paper 2
+
+Standard deviation of the quarterly series, % of nominal GDP:
+
+| Era | News (announcement-dated) | Unanticipated |
+|---|---|---|
+| 1945-79 | 0.318 | 0.240 |
+| 1980-99 | 0.146 | 0.177 |
+| 2000-18 | 0.082 | **0.044** |
+
+The news and unanticipated series correlate at −0.011 over the full sample, which is what separate
+instruments need. But the unanticipated series loses four-fifths of its variance by the 2000s. **A
+proxy-SVAR identified off unanticipated tax changes has very little post-2000 variation left to work
+with.** That is the same fact as section 7.2 seen from the estimation side, and it is a constraint on
+Paper 2's design rather than a defect.
+
+## 8.4 Next
+
+1. Adjudicate the remaining 26 groups in `output/package_consistency_audit.csv` against Treasury
+   documents. The 2007 case is done.
+2. Source the 1993 unified Budget and 2010-11 tax policy making reforms to HM Treasury or HMRC
+   documents (§7.4), since the framing now rests on them.
+3. Then Paper 1's introduction and abstract.
+
+---
+
+# 9. BUG REVIEW, 3 SEPTEMBER 2026
+
+Full adversarial pass over Facts 1-4 and sections 7-8. Three defects found and fixed, two concerns
+tested and cleared, one claim retracted.
+
+## Fixed
+
+**F1. The season-gap figure rested on two observations.** §7.4 quoted an autumn-minus-spring gap
+"peaking at 0.357 in the 1980s". That decade has **2** autumn measures, from one Budget. Autumn
+Budgets were rare before 1993 (n = 20, 3, 11, 17, 2 for the 1940s to 1980s, against 221, 133, 133
+after). `R/08_robustness.R` now prints cell counts and a `reportable` flag at n >= 30, and writes
+`output/season_gap.csv`. The substantive point is unchanged: among reportable decades the gap runs
++0.21, +0.17, −0.03, so the calendar channel closes while the level keeps rising.
+
+**F2. The 2019 general election was missing from Fact 4.** The election date list ended at
+2017-06-08, so the 56 measures announced after it got `next_el = NA` and dropped out silently.
+Adding 2019-12-12 **strengthens** the result: +0.075 (z 2.37, p 0.018) on n = 751 across 49 events,
+against +0.064 (p 0.038) on n = 719 before.
+
+**F3. Two sections were computed on different data.** The 2007 package override was applied inside
+`R/09_shock_split.R` only, so §7.2 (built by `08_robustness.R` from the unfixed chained file)
+disagreed with §8 (built by `09` from the fixed one). The override now lives in **`R/03_chain.R`**,
+which recomputes `usable` and writes `endo_exo_raw` and `endo_exo_over` so the pre-override coding
+stays recoverable. Everything downstream now sees one classification. Effects: the Paper 2
+anticipation share for 2000-19 moves 0.795 to 0.815, and `sd_news` for 2000-18 moves 0.144 to 0.082.
+
+## Tested and cleared
+
+**C1. Cluster-robust inference with more parameters than clusters.** Fact 2 has K = 128 parameters
+(10 instruments + 118 Budget fixed effects) against G = 118 clusters, so the cluster-robust variance
+matrix is rank deficient and CR1 standard errors are suspect in principle. Two checks:
+
+| | CR1 est | CR1 se | Pairs-bootstrap sd (600 reps) | Within-transformed se |
+|---|---|---|---|---|
+| Social security | +0.385 | 0.051 | 0.051 | 0.050 |
+| Income | +0.128 | 0.037 | 0.037 | 0.036 |
+| Capital gains | −0.112 | 0.034 | 0.035 | 0.033 |
+| VAT | +0.096 | 0.042 | 0.043 | 0.041 |
+
+Demeaning by Budget event reduces K to 10 against G = 118 and returns identical point estimates and
+near-identical standard errors. Fact 2 is not an artefact of the estimator.
+
+**C2. Decade cells driven by single Budget events.** The largest single event accounts for 11-25% of
+a decade's measures (25% only in the 1940s, n = 80). No decade result rests on one Budget.
+
+## R8. Eighth retraction
+
+**"The pre-announced impulse has been the same size for seventy years." FALSE.** On the household
+exogenous sample it is flat to 2003 (0.041, 0.049, 0.051% of GDP) and then falls to 0.030. The claim
+that survives is the one about the surprise: the unforeseen impulse falls by a factor of about five,
+much faster than the foreseen one, which is why the foreseen *share* rises monotonically. The total
+impulse shrinks as well, and the paper must say so.
+
+---
+
+# 10. THE DISTRIBUTIONAL QUESTION, TESTED (3 September 2026)
+
+Run by `R/08_robustness.R` Part D. The framing rests on the idea that timing has consequences for
+people. That is checkable, and it does not say what we hoped.
+
+Incidence groups: **regressive** = excise duties and VAT; **progressive** = income tax, CGT,
+inheritance tax. NICs excluded from both, being contributory and regressive at the top.
+
+| Era | Count gap (within Budget) | z | p | Revenue-weighted gap |
+|---|---|---|---|---|
+| 1945-79 | −0.040 | −0.76 | 0.45 | −0.031 |
+| 1980-99 | **+0.139** | 2.66 | 0.008 | +0.140 |
+| 2000-19 | +0.024 | 0.46 | **0.64** | **+0.262** |
+
+**On the inference-valid count basis, there is no significant gap today.** The gradient was real in
+1980-99 and has closed. This confirms R5 on the primary outcome; my expectation that it had widened
+was wrong.
+
+On the descriptive revenue basis the gap widens throughout, to 0.262. Both statements are true and
+they are not the same statement. **The paper must not quote the revenue gap as though it were
+tested.**
+
+The honest version, share arriving with under 30 days' notice:
+
+| Era | Regressive | Progressive | Gap |
+|---|---|---|---|
+| 1945-79 | 0.829 | 0.833 | −0.004 |
+| 1980-99 | 0.736 | 0.694 | +0.042 |
+| 2000-19 | 0.432 | 0.328 | **+0.104** |
+
+Today 43% of regressive tax changes arrive with under a month's notice against 33% of progressive
+ones. Real, modest, quotable.
+
+## What this means for the framing
+
+**"Poorer households get less warning" is not supportable as a headline finding.** The instrument
+gradient does not carry it.
+
+The distributional argument that *is* available runs the other way, and Paper 1 can only establish
+its premise, not test it: notice is worth something only to a household that can act on it, which
+requires savings, income flexibility or advice. The quadrupling of lead time is therefore a large
+change in something whose value is unevenly distributed. **Testing that is Paper 2's job**, and
+Paper 1 should state it as the motivation for Paper 2 rather than as a result.
+
+What Paper 1 does establish, and can say boldly: notice is not randomly assigned. It depends on the
+instrument (Fact 2), on where the Budget falls in the calendar (Fact 3), and on the electoral cycle
+(Fact 4). The only systematic, deliberate-looking use of timing in the whole sample is the political
+one.
+
+---
+
+# 11. PAPER 1 CLOSED, 3 September 2026
+
+Draft in `PAPER1.md`: abstract, introduction and all ten sections populated with verified numbers.
+The abstract leads with the pooled-multiplier point, which is the only claim in the paper that
+obliges another researcher to change what they do.
+
+**Analysis is closed.** No further estimation is planned for Paper 1. Everything reproduces from
+`run_all.R`, which now runs 01 through 09 clean.
+
+**What closing means, and what it does not.** The results are settled. Three things remain before
+submission and are writing or verification tasks, not analysis:
+
+1. Check every institutional quotation in `SOURCES.md` against the original document. They were
+   retrieved through an automated fetch. Two items are flagged UNVERIFIED: the command number of the
+   1992 budgetary reform White Paper, and the draft-clause lead-time wording in the 9 December 2010
+   ministerial statement.
+2. Position against the fiscal foresight literature in the first two pages. Leeper, Walker and Yang
+   (2013), Mertens and Ravn, Romer and Romer (2010), Cloyne (2013). Without this a referee says the
+   result is already known. Full citations must be added; the draft names them only.
+3. Convert `PAPER1.md` to the target journal's format. Fiscal Studies is the intended home.
+
+**Standing caveats to carry into the draft**, all already in the text: the outcome definition was
+chosen after seeing results on alternatives; the election result is the weakest finding; the
+distributional claim is motivation for Paper 2 and not a result here; delivery of announced policy is
+unobservable in this source.
+
+**Paper 2 inherits** the split shock series (`output/uk_tax_shocks_split.csv`), the constraints in
+§8.3 and the memory `fiscaluk-paper2-constraints`, and the anti-avoidance coding divergence in §8.2,
+which is to be handled as robustness rather than by recoding.

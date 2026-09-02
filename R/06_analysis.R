@@ -114,7 +114,9 @@ write.csv(season, file.path(OUTPUT, "fact3_season.csv"), row.names = FALSE)
 msg("\n--- FACT 4: are tax rises scheduled past the next election? ---")
 EL <- as.Date(c("1945-07-05","1950-02-23","1951-10-25","1955-05-26","1959-10-08","1964-10-15",
 "1966-03-31","1970-06-18","1974-02-28","1974-10-10","1979-05-03","1983-06-09","1987-06-11",
-"1992-04-09","1997-05-01","2001-06-07","2005-05-05","2010-05-06","2015-05-07","2017-06-08"))
+"1992-04-09","1997-05-01","2001-06-07","2005-05-05","2010-05-06","2015-05-07","2017-06-08",
+"2019-12-12"))   # 2019 was missing: without it the 56 measures announced after
+                 # June 2017 got next_el = NA and dropped out of the test entirely.
 nx <- sapply(m$announce, function(a) { z <- EL[EL > a]; if (!length(z)) NA else z[1] })
 m$next_el <- as.Date(nx, origin = "1970-01-01")
 m$mths_to_el  <- as.numeric(m$next_el - m$announce)/30.44

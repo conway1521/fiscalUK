@@ -37,6 +37,48 @@ chain <- rbind(a, b)
 chain <- chain[order(chain$budget_date), ]
 rownames(chain) <- NULL
 
+# ---------------------------------------------------------------------------
+# PACKAGE CONSISTENCY OVERRIDES
+#
+# Rows sharing a Budget event, tax type and implementation date were announced
+# together and cannot carry different exogeneity status. R/09_shock_split.R
+# audits every such group; output/package_consistency_audit.csv lists 27.
+#
+# The override lives HERE, not downstream, so that every script sees the same
+# classification. Applying it in 09 alone made section 7.2 of RESULTS.md (built
+# by 08 from the unfixed data) disagree with section 8 (built by 09 from the
+# fixed data).
+#
+# ONLY adjudicated cases go in this table. Each needs a reason.
+PACKAGE_OVERRIDES <- data.frame(
+  source  = "Modern",
+  pattern = "Removing starting rate of IT",
+  to      = "X",
+  reason  = paste("March 2007 Budget: the basic-rate cut to 20p and the abolition of the 10p",
+                  "starting rate were announced together for 6 April 2008. Cloyne codes both",
+                  "exogenous; the modern coding split them X/N, which dropped the offsetting",
+                  "leg and left a spurious -0.82% of GDP shock in 2008Q2."),
+  stringsAsFactors = FALSE)
+
+chain$endo_exo_raw  <- chain$endo_exo
+chain$endo_exo_over <- FALSE
+for (k in seq_len(nrow(PACKAGE_OVERRIDES))) {
+  o <- PACKAGE_OVERRIDES[k, ]
+  i <- chain$source == o$source & grepl(o$pattern, chain$measure, ignore.case = TRUE)
+  chain$endo_exo[i]      <- o$to
+  chain$endo_exo_over[i] <- TRUE
+  msg("package override: %d row(s) matching '%s' -> %s", sum(i), o$pattern, o$to)
+}
+
+# `usable` was computed in 01/02 from the pre-override classification, so it has
+# to be rebuilt here. Cloyne's rule is exogenous-only; the modern rule adds the
+# household restriction, because firm measures were never coded for exogeneity.
+chain$usable <- chain$timing_sample & chain$endo_exo %in% "X" &
+                (chain$source == "Cloyne" | chain$target %in% "H")
+msg("usable recomputed after overrides: %d rows (%d Cloyne, %d Modern)",
+    sum(chain$usable), sum(chain$usable & chain$source == "Cloyne"),
+    sum(chain$usable & chain$source == "Modern"))
+
 OVL <- c(as.Date("2004-03-17"), as.Date("2009-04-22"))
 
 # ---------------------------------------------------------------------------
