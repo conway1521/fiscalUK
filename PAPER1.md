@@ -7,20 +7,19 @@
 
 ## Abstract
 
-Narrative tax shocks are the workhorse instrument for estimating fiscal multipliers, and they are
-dated by implementation. Using 2,252 UK tax measures announced between 1945 and 2019, we show that
-the interval between announcement and implementation has changed so much that a series pooled across
-the post-war period mixes two economically different objects. The share of the tax impulse announced
-more than 120 days before taking effect rises from 0.20 in 1945-79 to 0.82 since 2000, and the
-unanticipated component of the quarterly impulse falls roughly fivefold. We then show that this
-interval is not incidental. Comparing measures announced in the same Budget, National Insurance
-changes are 39 percentage points more likely than excise duties to arrive with long notice, the
-fiscal-year calendar produces long notice only when the Budget falls late in the year, and tax rises
-are four times more likely than tax cuts to take effect after the next general election. The rise is
-dated to 1993 and 2010, coinciding with two deliberate reforms of the Budget process, both justified
-by parliamentary scrutiny and predictability and neither assessed for macroeconomic consequence. We
-find no evidence that crises shorten the interval. The anticipation content of British fiscal policy
-has been transformed by decisions taken on other grounds.
+Narrative tax shocks are dated by implementation, and the resulting series are pooled across decades.
+Using 2,252 UK tax measures announced between 1945 and 2019, we show that the interval between
+announcement and implementation has changed enough that such a series mixes two economically
+different objects. The share of the tax impulse announced more than 120 days before taking effect
+rises from 0.18 in 1945-79 to 0.70 since 2000, and the unanticipated component of the quarterly
+impulse falls roughly fivefold. Computing the same quantity from the century-long dataset of Cloyne,
+Hürtgen and Dimsdale (2025), on their coding and their threshold, reproduces the series and extends
+it back to 0.02 in 1920-44. We then show the interval is not incidental. Within the same Budget,
+National Insurance changes are 39 percentage points more likely than excise duties to arrive with
+long notice, the fiscal-year calendar produces long notice only when the Budget falls late in the
+year, and tax rises are four times more likely than cuts to take effect after an election. The rise dates
+to 1993 and 2010, coinciding with two reforms of the Budget process justified by scrutiny and
+predictability and never assessed for macroeconomic consequence. Crises do not shorten it.
 
 **JEL:** E62, E65, H20, H30. **Keywords:** narrative tax shocks, fiscal foresight, tax policy
 making, announcement effects, fiscal multipliers.
@@ -175,7 +174,12 @@ restriction would discard 41% of Cloyne's datable measures and 69% of ours.
 ### 2.2 The outcome
 
 The primary outcome is `long`, an indicator for a gap of at least 120 days between announcement and
-implementation. Two alternatives were considered and rejected as primary. The raw lag in quarters is
+implementation. **The concept is not ours.** Cloyne (2013), following Mertens and Ravn (2012),
+classifies a tax change as anticipated when its implementation lag exceeds 90 days, and the
+literature has used that convention since. Our 120-day threshold is a variant of it, widened to
+exclude the March-Budget-to-6-April case described below, and section 8.1 shows the two thresholds
+give the same answer. What is new in this paper is not the distinction but the treatment of its
+incidence as a time series. Two alternatives were considered and rejected as primary. The raw lag in quarters is
 degenerate, with 42% of mass at zero. An indicator for implementation falling in a later fiscal year
 is partly artefactual: 34% of its positives are under 60 days, being a March Budget implementing on
 6 April, and that share drifts from 0.72 in the 1980s to 0.11 in the 2010s, so the measure changes
@@ -328,6 +332,40 @@ and 1990-2003, a window lying entirely within Cloyne's coding, so it cannot be a
 modern data. The foreseen impulse falls too, by less, which is why the foreseen share rises. Do not
 claim the foreseen impulse is constant; it is not.
 
+### 8.1 External validation on data we did not build
+
+The result above is computed on a series we assembled, so the obvious question is whether it survives
+on someone else's. It does.
+
+Cloyne, Hürtgen and Dimsdale (2025) use a narrative UK tax dataset covering roughly 1918 to 2020, and
+their replication package publishes the quarterly exogenous shock series in two variants, a baseline
+containing all narrative shocks and an unanticipated variant restricted to measures implemented
+within Cloyne's 90-day window. The ratio of the two is an anticipation share, constructed by other
+researchers, on their own coding, over a longer sample, using their own threshold. Nothing in it came
+from us.
+
+| Era | Their share | Our share |
+|---|---|---|
+| 1920-44 | 0.022 | not covered |
+| 1945-79 | 0.248 | 0.184 |
+| 1980-99 | 0.420 | 0.384 |
+| 2000-20 | **0.697** | **0.699** |
+
+The two series agree in shape and in level, and most closely where the sample is densest. Their
+decade series also contains the break: the anticipation share runs 0.286 in the 1980s and 0.614 in
+the 1990s, which is where section 9 dates it independently. And their longer sample strengthens the
+result rather than qualifying it, because in 1920-44 the anticipation share was 0.022, so on a
+century view the quantity has risen from almost nothing.
+
+This has a second implication. The ingredients for this finding have been publicly available in a
+top-five journal's replication archive, and were used there as a robustness check rather than
+examined. That is the gap this paper occupies, stated as concretely as it can be.
+
+Reproduced by `R/10_external_validation.R`, which downloads the series from Harvard Dataverse
+(doi:10.7910/DVN/JVNAPS).
+
+### 8.2 The pipeline
+
 The stock of announced-but-not-yet-in-force tax change tells the same story. Median pending stock
 rises from 0.026% of GDP in 1945-79 to 0.991% in 2004-18, and the mean number of pending measures
 from 2.0 to 26.4. Report the median: the mean is dominated by VAT, announced March 1971 and in force
@@ -462,7 +500,16 @@ Primary documents are listed in `SOURCES.md` with verification status.
 
 ---
 
-## Appendix: reproduction and caveats
+## Appendix: journal fit, reproduction and caveats
+
+**Fiscal Studies requirements.** Papers should preferably not exceed 7,500 words; the abstract is
+capped at 200 words and a JEL classification is required. Submission is .docx or LaTeX through
+Research Exchange, under single anonymised review, and empirical papers must supply full replication
+materials. This draft runs to roughly 4,600 words including tables, so there is room for the
+literature review and the figure discussion to expand. The abstract is within the cap. The
+replication requirement is already met by `run_all.R`.
+
+
 
 `run_all.R` rebuilds everything. `RESULTS.md` logs eight retractions, the seam tests, the bug review
 of 3 September 2026 and the distributional test. `SOURCES.md` carries the institutional citations and
@@ -473,16 +520,17 @@ alternatives. The exogeneity classification agrees across the two codings on 78.
 measures in the overlap, with a systematic divergence on anti-avoidance that affects Paper 2 rather
 than Paper 1. The election result is fragile.
 
-**A competing dataset now exists and must be addressed.** Hürtgen, Cloyne, Dimsdale and Postel-Vinay
-(2024) extend the UK narrative account to 2009-2020, and Cloyne, Hürtgen and Dimsdale (2025) use a
-century-long version of it in the *Journal of Political Economy*. Our own coding of 2004-2018
-predates that extension and overlaps it. A referee will ask why we did not use theirs. Before
-submission we must state the answer, and should if possible cross-validate the modern half against
-their coding, which would remove the seam question for the recent period entirely and could extend
-the sample to 2020. See the note in `RESULTS.md` §12.
+**A competing dataset exists, and it corroborates rather than threatens.** Hürtgen, Cloyne, Dimsdale
+and Postel-Vinay (2024) extend the UK narrative account to 2009-2020, and Cloyne, Hürtgen and
+Dimsdale (2025) use a century-long version in the *Journal of Political Economy*. Section 8.1 uses
+their published series to reproduce this paper's central quantity. Their replication package
+publishes aggregated quarterly series rather than measure-level announcement dates, so it cannot
+substitute for the measure-level work here, and the paper should say so plainly when explaining why
+we coded 2004-2018 ourselves. Obtaining the measure-level 2024 dataset would still be worth doing,
+since it would allow the modern half to be cross-validated directly.
 
 **Institutional quotations are verified** against source documents (`SOURCES.md`, 3 September 2026).
 Two carry caveats. The command number of the 1992 budgetary reform White Paper could not be
 confirmed and is omitted; cite the White Paper on Lamont's own words instead. The 9 December 2010
-ministerial statement was verified through the Internet Archive because Parliament's publications
-site refuses direct requests, and should be confirmed against Hansard in a library.
+ministerial statement was verified through three independent Internet Archive captures spanning 2013
+to 2025, all agreeing, because Parliament's publications site refuses direct requests.
