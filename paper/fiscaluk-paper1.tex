@@ -23,7 +23,7 @@
 \author{Alessandro Conway\thanks{Draft. All results are reproduced end to end by the replication
 package. I thank James Cloyne for making the underlying narrative dataset public, without which this
 paper could not exist.}}
-\date{\today}
+\date{15 December 2021\\[3pt]{\normalsize This revision: September 2026}}
 
 \begin{document}
 \maketitle
@@ -52,29 +52,30 @@ effects, fiscal multipliers.\\
 
 \section{Introduction}
 
-The narrative tradition in fiscal policy has always recorded the dates this paper studies, and has
-always used them for something else. \citet{romer2010} identify legislated US tax changes from the
+Two dates attach to every tax measure: the day it is announced and the day it takes effect. The
+narrative tradition in fiscal policy has recorded both for forty years and has never asked what sits
+between them. \citet{romer2010} identify legislated US tax changes from the
 contemporaneous record, code their motivation, and date them by when they take effect, and
 \citet{cloyne2013} builds the corresponding UK account for 1945 to 2009. That record has since been
 extended in both directions, back into the interwar period by \citet{cloyne2023} and forward to 2020
 by \citet{hurtgen2024}, so that a narrative account of British tax policy now spans roughly a century
-and has been used at that length by \citet{cloyne2025}. In all of this work the implementation date
-is a dating convention, an input to the construction of a shock series rather than a quantity of
-interest, and the announcement date enters, when it enters at all, as the means of separating
-measures that were foreseen from measures that were not.
+and has been used at that length by \citet{cloyne2025}.
 
-The foresight literature takes the same dates and asks a sharper question of them, which is whether
-anticipation invalidates the identification. \citet{yang2005} shows that policy foresight changes the
-dynamic response to a tax change, \citet{leeper2013} establish that foresight places the
-econometrician behind the agent's information set and that the resulting representation is
-non-invertible, so that the shock cannot be recovered from the observed series in the usual way, and
-\citet{mertens2011,mertens2012} construct separate anticipated and unanticipated US tax series in
-order to estimate their effects apart. \citet{ramey2011} makes the parallel argument for government
+Throughout that work the implementation date is a dating convention, an input to the construction of
+a shock series rather than a quantity of interest. The announcement date enters, when it enters at
+all, as the means of separating measures that were foreseen from measures that were not.
+
+The foresight literature asks a sharper question of the same dates. Does anticipation invalidate the
+identification? \citet{yang2005} shows that policy foresight changes the
+dynamic response to a tax change. \citet{leeper2013} establish that foresight places the
+econometrician behind the agent's information set, leaving a non-invertible representation from
+which the shock cannot be recovered in the usual way. \citet{mertens2011,mertens2012} construct
+separate anticipated and unanticipated US tax series in order to estimate their effects apart. \citet{ramey2011} makes the parallel argument for government
 spending, that the timing of the news rather than the timing of the outlay is what identifies the
 shock. \citet{favero2012} and \citet{alesina2015} move closer to the policy process itself, the
 latter treating fiscal consolidations as multi-year plans with announced and unexpected components
-rather than as sequences of independent measures, which is the nearest existing treatment to the one
-taken here.
+rather than as sequences of independent measures. Of the existing work this comes nearest to the
+treatment taken here.
 
 The claim of this paper is not that anticipation is new, nor that the literature has ignored it. What
 these two bodies of work share is the level at which anticipation is handled. In both, foresight is a
@@ -86,15 +87,16 @@ whether the quantity has moved over the life of the sample. The assumption that 
 nowhere defended, because it is nowhere stated.
 
 Set against that is a second literature, entirely separate, which does treat the timing of tax policy
-as its subject and treats it as procedure. The reform of the Budget process is documented in the
-parliamentary record and in the Treasury's own accounts of how tax policy is made, from the
-unification of the Budget and the Autumn Statement announced in 1992 through the consultation
-framework of 2010 and 2011 to the single fiscal event of 2016, and that record is explicit about lead
-times, to the point of stating a target of sixteen months from announcement to effect. It is not,
-however, in any conversation with the macroeconomic literature. The documents justify longer lead
-times by reference to parliamentary scrutiny and to the predictability of the tax system, and they
-contain no assessment of what a longer lead time does to the transmission of a fiscal impulse,
-because that is not the question they were written to answer.
+as its subject and treats it as procedure. The parliamentary record and the Treasury's own accounts of how
+tax policy is made document four reforms of the Budget process: the unification of the Budget and
+the Autumn Statement announced in 1992, the consultation framework of 2010 and 2011, and the single
+fiscal event of 2016. That record is explicit about lead times. It states a target of sixteen months
+from announcement to effect.
+
+That record is in no conversation with the macroeconomic literature. It justifies longer lead times
+by reference to parliamentary scrutiny and to the predictability of the tax system, and contains no
+assessment of what a longer lead time does to the transmission of a fiscal impulse. Answering that
+was never its purpose.
 
 Between the two sits the gap this paper occupies. The macroeconomic literature has established that
 foresight matters and has built the tools to handle it, one measure at a time and within a sample
@@ -122,16 +124,15 @@ three weeks or five months of warning depending only on when the Budget falls. A
 announced six to twenty-four months before a general election, 12.5 per cent of tax rises take effect
 after the country has voted against 3.1 per cent of tax cuts.
 
-Against this, crises do not shorten the interval on any of three definitions of treatment, and the
-data cannot observe whether announced policy is quietly abandoned, because a scorecard records
-pre-announced sunsets and not later changes of mind. Both are reported in Section~\ref{sec:nulls},
-and the first of them carries weight in the argument rather than merely qualifying it.
+Crises do not shorten the interval on any of three definitions of treatment. Every estimate runs the
+other way.
 
-Section~\ref{sec:data} describes the data and the tests that establish the trend is not an artefact
-of joining two sources. Sections~\ref{sec:trend} to \ref{sec:elections} present the four results,
-Section~\ref{sec:nulls} the two nulls, Section~\ref{sec:impulse} converts the measure-level findings
-into the anticipation content of the revenue impulse and reports the external replication, and
-Section~\ref{sec:dating} dates the change and sets it against the institutional record.
+Section~\ref{sec:data} describes the data, what the source can and cannot record, and the tests that
+establish the trend is not an artefact of joining two sources. Sections~\ref{sec:trend} to
+\ref{sec:elections} present the four results and Section~\ref{sec:nulls} the crisis null.
+Section~\ref{sec:impulse} converts the measure-level findings into the anticipation content of the
+revenue impulse and reports the external replication. Section~\ref{sec:dating} dates the change and
+sets it against the institutional record.
 
 \section{Data}\label{sec:data}
 
@@ -143,16 +144,18 @@ classification. I extend the record from Budget 2004 to Autumn 2018 from Treasur
 the same concepts and the same fields. The two are chained at 1 January 2004, Cloyne's coding before
 and mine after, which gives 2,252 datable measures across 122 Budget events.
 
-One thing the announcement date is not is the moment agents first learn that a measure is coming. It
-is the date of the scored, dated commitment, taken from the Budget report or scorecard, and 90 per
-cent of measures are dated to Budget day itself. Since 2010 the tax policy making framework has
-placed a consultation stage ahead of that date for many measures, so for those the information set
-moved earlier than the record shows. The measured lead is therefore a lower bound on foresight, and
-the bound is loosest in exactly the period where the measured lead is longest. That direction is
-convenient: it means the rise documented below understates the rise in true foresight, and no result
-in this paper depends on the gap being small. Every quantity reported should nonetheless be read as
-formal scored-policy lead time rather than as foresight directly, and the two coincide only for the
-measures that arrive without prior consultation.
+The announcement date is not the moment agents first learn that a measure is coming. It is the date
+of the scored, dated commitment, taken from the Budget report or the scorecard, and 90 per cent of
+measures carry Budget day itself. Since 2010 the tax policy making framework has placed a
+consultation stage ahead of that date for many measures, so for those the information set moved
+earlier than the record shows.
+
+The measured lead is therefore a lower bound on foresight, and the bound is loosest in the period
+where the measured lead is longest. The direction of that bias is convenient. It means the rise
+documented below understates the rise in true foresight, and no result here depends on the gap being
+small. Every quantity reported should nonetheless be read as formal scored-policy lead time rather
+than as foresight directly. The two coincide only for measures that arrive without prior
+consultation.
 
 The sample is every datable, non-reversal measure regardless of exogeneity. How long the policy
 process takes is a descriptive question with no endogeneity to purge, and imposing the identifying
@@ -221,18 +224,30 @@ effective sample from 2,252 to 251, so it is used for descriptive magnitudes and
 \label{fig:gap}
 \end{figure}
 
-\subsection{The seam}\label{sec:seam}
+\subsection{What a scorecard records}\label{sec:scope}
 
-The trend crosses a source join, which is the first thing to attack. Six tests bear on it, and all
-six pass.
+A scorecard records commitments, not outcomes. Across 3,092 rows there is not one case in which an
+expiry date reflects a later decision rather than a sunset announced at the outset, and every
+reversal row is announced on or before its parent and implements exactly on the parent's stop date.
+The source cannot see a measure that was announced and later dropped without ceremony.
+
+This bounds the paper rather than weakening it. Every claim below concerns scored, dated commitments,
+and none concerns delivery. Where a sunset is announced it is recorded, and those are countable:
+10.6 per cent of post-2004 measures carry one against 3.6 per cent before.
+
+\subsection{Joining two sources}\label{sec:seam}
+
+The trend crosses a join at 2004, Cloyne's coding before it and mine after. If the two record an
+announcement differently, or itemise a Budget differently, the rise is a change in the record and not
+in behaviour. Six tests say it is not.
 
 Both codings place roughly nine tenths of announcements on the Budget day itself, 0.916 for Cloyne
 and 0.888 for mine, so the announcement date is the same object in each. The years 2004 to 2009 are
 coded twice, and on the eleven Budgets both records contain, Cloyne's coding gives a long-notice
 share of 0.460 and mine 0.496, or 0.627 and 0.615 weighted by revenue, with a paired within-event
 difference of $-0.021$ and a $t$ statistic of $-0.46$. Cloyne splits those same Budgets 2.8 times more
-finely, at 32.0 measures per event against 11.5, and still returns the same share, which is the
-strongest evidence that itemisation practice is not driving anything.
+finely, at 32.0 measures per event against 11.5, and still returns the same share. Itemisation
+practice is not driving the result.
 
 The trend itself holds unweighted, from 0.162 to 0.646, at event level, from 0.195 to 0.618, and
 revenue-weighted, from 0.285 to 0.740. Holding the 1945--79 instrument mix fixed and letting only the
@@ -359,17 +374,18 @@ difference is $+0.075$ ($z = 2.37$, $p = 0.018$) on 751 measures across 49 event
 window of nought to twenty-four months it is $+0.060$ ($z = 2.26$, $p = 0.024$).
 
 This is the most quotable finding in the paper and the least robust, and it should be read as a
-descriptive association rather than as evidence of deliberate scheduling. Three things stand between
-the pattern and that stronger reading. Election dates were not fixed before 2011, so the vote a
-measure is being compared against was itself partly a government choice, and the causation can run
-from the fiscal calendar to the election date rather than the other way. The next election date was
-in any case not known when most of these measures were announced, so the test conditions on a
-realised date rather than an expected one. And Budget fixed effects do not absorb within-Budget
-differences in instrument mix or statutory implementation calendars, both of which correlate with
-sign: rises lean towards the fiscal-year-pinned instruments of Section~\ref{sec:calendar}, which
-mechanically land further out. Restricting to the fixed-term period would address the first two, but
-2011 to 2019 is too short a window to carry the test. The pattern is real and the interpretation is
-open.
+descriptive association rather than as evidence of deliberate scheduling. Three objections stand
+between the pattern and that stronger reading. Election dates were not fixed before 2011, so the vote a
+measure is compared against was itself partly a government choice, and the causation can run from the
+fiscal calendar to the election date rather than the other way. The date was in any case not known
+when most of these measures were announced, so the test conditions on a realised election rather than
+an expected one. Budget fixed effects then leave within-Budget differences in instrument mix and
+statutory calendar untouched, and both correlate with sign, since rises lean towards the
+fiscal-year-pinned instruments of Section~\ref{sec:calendar} and those land further out by
+construction.
+
+Restricting to the fixed-term period would answer the first two objections. Eight years will not
+carry the test. The pattern is real and the interpretation is open.
 
 \begin{figure}[htbp]
 \centering
@@ -378,7 +394,7 @@ open.
 \label{fig:elec}
 \end{figure}
 
-\section{What does not happen}\label{sec:nulls}
+\section{Crises do not shorten the interval}\label{sec:nulls}
 
 Crises do not visibly shorten the interval. Taking the years 1974--76, 1992--93 and 2008--09 as
 crisis windows and conditioning on decade, the estimate is $+0.047$ on 753 endogenous measures of
@@ -387,26 +403,17 @@ which 159 are in a window ($p = 0.57$, 95 per cent interval $-0.113$ to $+0.206$
 Both are positive, neither is significant, and earlier tests on the population of crisis-response
 measures and on years containing three or more fiscal events are null or wrong-signed.
 
-These intervals should be read for what they exclude, which is not much. They rule out a crisis
-shortening of more than 11 percentage points on the endogenous sample and 23 on the exogenous one,
-and the smallest true shortening this design would detect four times in five is 23 and 43 percentage
-points respectively. A crisis effect of the size one might expect could sit inside these bounds
-undetected, so this is a failure to find an effect and not a demonstration that none exists. What is
-more informative is the descriptive fact, which runs the other way: of the 22 exogenous measures
-announced in 2008--09, 95.5 per cent carried long notice against 34.4 per cent of the 195 announced
-elsewhere in that decade. Twenty-two measures is a thin base and the contrast is descriptive, not a
-test. Crises in
-this sample are associated with more pre-commitment, not less. That is the opposite of what a reserve
-capacity to act quickly would predict, though on this evidence it is a suggestive contrast rather
-than a test.
+These intervals exclude very little. They rule out a crisis shortening of more than 11 percentage
+points on the endogenous sample and 23 on the exogenous one, and the smallest true shortening this
+design would detect four times in five is 23 and 43 points respectively. A crisis effect of the size
+one might expect could sit inside those bounds undetected. This is a failure to find an effect, then,
+and not a demonstration that none exists.
 
-The second null is a limit of the source rather than a finding about policy. In 3,092 rows there is
-not one case in which a recorded expiry date reflects a later decision rather than a sunset announced
-at the outset, and every reversal row is announced on or before its parent and implements exactly on
-the parent's stop date. A scorecard-derived narrative dataset cannot observe quiet abandonment, so
-every claim in this paper concerns scored, dated commitments and not delivery. What can be said is
-bounded: 10.6 per cent of post-2004 measures carry a pre-announced sunset against 3.6 per cent
-before.
+The descriptive record runs the other way and runs harder. Of the 22 exogenous measures
+announced in 2008--09, 95.5 per cent carried long notice against 34.4 per cent of the 195 announced
+elsewhere in that decade. Twenty-two measures will not carry a test, and the contrast is descriptive.
+It nonetheless points the same way as the estimates. Crises in this sample bring more
+pre-commitment, not less, which is not how a capacity held in reserve for emergencies would behave.
 
 \section{The anticipation content of the fiscal impulse}\label{sec:impulse}
 
@@ -423,10 +430,12 @@ preceded implementation by at least 120 days. The anticipation share in Table~\r
 $\sum_i |v_i| \ell_i / \sum_i |v_i|$, taken over measures whose implementation date falls in the era,
 and the revenue-weighted lead is $\sum_i |v_i| d_i / \sum_i |v_i|$ with $d_i$ the gap in days
 censored below at zero. Both use absolute costings, so a rise and a cut of equal size contribute
-equally and there is no netting of one against the other. Costings are the peak-year figure at
-announcement, expressed as a share of that year's nominal GDP and never revised, so subsequent
-re-costings do not enter. A measure with several implementation dates is dated by the first, and a
-measure with a pre-announced sunset is counted once, at implementation.
+equally and neither nets against the other.
+
+Costings are the peak-year figure at announcement, expressed as a share of that year's nominal GDP
+and never revised, so subsequent re-costings do not enter. A measure with several implementation
+dates is dated by the first. A measure with a pre-announced sunset is counted once, at
+implementation.
 
 The quarterly decomposition below is a different object and nets within the quarter. Let $F_t$ be the
 sum of $v_i$ over measures implementing in quarter $t$ with $\ell_i = 1$, and $U_t$ the same sum over
@@ -514,14 +523,15 @@ pre-announcement was once exceptional enough to be a landmark, and it is now rou
 The consequence for applied work follows, with a limit on how far it can be pushed here. A multiplier
 estimated on a UK narrative series pooled across the post-war period averages a regime in which tax
 changes mostly arrived as surprises with one in which they mostly did not, and the mix changes
-monotonically over the sample. Whether that pooling biases the estimate, and in which direction,
-depends on how news enters the estimator and on whether anticipated and unanticipated UK measures
-in fact generate different macroeconomic responses. Neither is established in this paper, and
-demonstrating them requires a re-estimation this paper does not attempt. What is established is that
-the information content of the series is not stationary, which is a property of the instrument rather
-than a conjecture about the estimate. The announcement-dated and implementation-dated series built
-here are provided as separate instruments so that the two can be estimated apart, and the
-\citet{leeper2013} foresight literature gives the reasons for expecting the distinction to matter.
+monotonically over the sample.
+
+Whether that pooling biases the estimate, and in which direction, depends on how news enters the
+estimator and on whether anticipated and unanticipated UK measures in fact generate different
+macroeconomic responses. Neither is settled here, and settling them takes a re-estimation this paper
+does not attempt. What is settled is that the information content of the series is not stationary.
+That is a property of the instrument, not a conjecture about the estimate. The announcement-dated and
+implementation-dated series built here are supplied as separate instruments so the two can be
+estimated apart, and \citet{leeper2013} give the reasons for expecting the distinction to matter.
 
 \section{Dating the change}\label{sec:dating}
 
@@ -571,7 +581,9 @@ and that ``from then on the annual Budget will be in December, and it will cover
 but also public expenditure'', adding that the 1994 Finance Bill would be presented in January rather
 than April, which moved the legislative timetable as well as the announcement. The date was brought
 forward to November in the Budget Statement of 16 March 1993, and the first unified Budget was
-delivered by Kenneth Clarke on 30 November 1993. Budget 2010 set out predictability, stability and
+delivered by Kenneth Clarke on 30 November 1993.
+
+Budget 2010 set out predictability, stability and
 simplicity as objectives and published proposals ``to improve the way tax policy is made to support
 these objectives'', and the consultation response of December 2010 recorded that confirming most
 intended tax changes ``at least three months ahead of publication of the Bill supports predictability
@@ -580,10 +592,10 @@ simplicity within the tax system'', and the Treasury's current statement of the 
 is that ``most policies will be announced at least 16 months before they come into effect at the
 start of the next tax year''.
 
-Read together, the stated objectives across 1992, 2010, 2016 and 2017 are parliamentary and external
-scrutiny, predictability, stability, certainty, simplicity, and time for stakeholders to comment.
-None of them is macroeconomic. The reforms were chosen, deliberately and for reasons that were argued
-in public, and what was never raised in choosing them is the anticipation content of fiscal policy.
+The stated objectives across 1992, 2010, 2016 and 2017 are parliamentary and external scrutiny,
+predictability, stability, certainty, simplicity, and time for stakeholders to comment. None is
+macroeconomic. Each reform was argued for in public and chosen deliberately, and in none of those
+arguments does the anticipation content of fiscal policy appear.
 
 How far this is causal is a question the design cannot settle, and the claim made here is
 correspondingly weak. There is one country, one series, a searched break date, candidate reforms in
@@ -614,21 +626,21 @@ replication archive, where they were used as a robustness check rather than exam
 Two consequences follow. For applied work, a narrative tax series pooled across the post-war period
 is not a series of comparable objects, and the split provided here is what a researcher would need to
 test whether that matters, rather than a correction already shown to be necessary. For
-policy, the timing of a tax change carries economic content and is currently a residual of instrument
-choice and Budget scheduling, with a political tilt at the margin. Advance notice is valuable only to
-those able to act on it, which requires savings, flexible income or professional advice, so a large
-increase in advance notice is a large change in something whose value is unevenly held. Whether that
-unevenness matters for household behaviour is not testable in this dataset, and the obvious version
-of the claim does not survive here: the gap in notice between regressive and progressive instruments
-was significant between 1980 and 1999 and is not significant today, though 43 per cent of regressive
-measures still arrive with under a month's notice against 33 per cent of progressive ones.
-Establishing whether notice is distributed in a way that matters for the households receiving it is
-the subject of the companion paper.
+policy, the timing of a tax change carries economic content and is at present a residual of
+instrument choice and Budget scheduling, with a political tilt at the margin.
 
-What can be said here is narrower and firm. Britain reformed the timing of its tax policy twice, for
-reasons of parliamentary scrutiny and legal certainty, and in doing so transformed the anticipation
-content of fiscal policy. That consequence appears in none of the documents that made the case for
-the reforms.
+Notice is worth having only to a household that can act on it, and acting on it takes savings,
+flexible income or paid advice. A large increase in notice is therefore a large increase in a benefit
+that is unevenly distributed by construction. Whether the unevenness matters for household behaviour
+cannot be tested in this dataset. The obvious version of the claim does not survive what can be:
+the gap in notice between regressive and progressive instruments was significant between 1980 and
+1999 and is not significant today. The raw difference persists, with 43 per cent of regressive
+measures arriving on under a month's warning against 33 per cent of progressive ones. The companion paper takes up
+who receives the notice.
+
+The narrow claim is firm. Britain reformed the timing of its tax policy for reasons of parliamentary
+scrutiny and legal certainty, and in doing so transformed the anticipation content of fiscal policy.
+That consequence appears in none of the documents that made the case for the reforms.
 
 \bibliographystyle{agsm}
 \bibliography{references}
