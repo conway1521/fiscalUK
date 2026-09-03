@@ -29,5 +29,6 @@ source("R/17_reconcile_build.R")      # Paper 2: prices each convention differen
 source("R/18_consumption.R")          # Paper 2: household consumption, the primary outcome
 source("R/19_incidence.R")            # Paper 2: distributional incidence from public ONS data
 source("R/20_state_dependence.R")     # Paper 2: what survives - state-dependent multipliers
+source("R/21_p2_figures.R")          # Paper 2: figures
 
 cat("\nDone. Outputs in data-derived/ and output/.\n")
