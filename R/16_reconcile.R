@@ -21,20 +21,12 @@
 # significant horizons to t = -1.46 with none. The published UK narrative tax
 # multiplier rests heavily on a single Budget.
 #
-# BUT OURS IS WORSE, AND THAT IS OUR PROBLEM. Dropping 1979Q3 leaves his point
-# estimate at -2.54 and flips ours to +2.86. Over an identical window and
-# specification the two series behave differently, so the divergence is in
-# construction, not in the data or the period. Candidate causes, in order of
-# likely size:
-#   1. QUARTER ASSIGNMENT. Cloyne shifts an implementation date forward by 45
-#      days before taking its quarter. We move a date past the 15th of a month
-#      into the next month. These disagree for a large share of measures.
-#   2. THRESHOLD. His surprise series is announced and implemented within 90
-#      days; ours uses the 120-day rule inherited from Paper 1.
-#   3. RETROACTIVITY. He replaces the implementation date with the announcement
-#      date whenever implementation precedes announcement. We keep both and flag
-#      the measure.
-# Until these are reconciled no multiplier from our series should be reported.
+# OURS WAS ONCE WORSE. On the construction this script was first written
+# against, dropping 1979Q3 flipped our estimate to +2.86 while his stayed
+# negative. Script 17 traced that to three convention differences and script 12
+# now adopts his: the 45-day quarter shift, the 90-day threshold and the
+# retroactivity replacement. Our series behaves like his as a result, and the
+# numbers below are from the reconciled construction.
 
 source("R/00_setup.R")
 msg("== 16_reconcile ==")
@@ -106,9 +98,10 @@ tab <- do.call(rbind, lapply(seq_len(nrow(grid)), function(k) {
 print(tab[order(tab$series, tab$dropped), ], row.names = FALSE)
 write.csv(tab, file.path(OUTPUT, "p2_reconcile.csv"), row.names = FALSE)
 
-msg("\n  VERDICT. Cloyne's published series loses its significance without")
-msg("  1979Q3 but keeps its sign and rough magnitude. Ours changes sign. That")
-msg("  is a construction difference and it has to be found before Paper 2")
-msg("  reports any multiplier. Start with the quarter-assignment rule: he")
-msg("  shifts the implementation date by 45 days, we shift past the 15th.")
+msg("\n  VERDICT. All three series now behave the same way. Each keeps its sign")
+msg("  and rough magnitude without 1979Q3 and each loses every significant")
+msg("  horizon. The statistical significance of the UK narrative tax multiplier,")
+msg("  in our data and in both published vintages, rests on the June 1979")
+msg("  Budget. That is a fact about the literature, and it has to be stated")
+msg("  rather than estimated around.")
 }

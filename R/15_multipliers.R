@@ -48,11 +48,19 @@ agg <- function(yr, qt, val) {
   o <- setNames(rep(0, length(key)), key); o[names(s)] <- s; as.numeric(o)
 }
 
-#' Unanticipated and news-dated series for a subset of measures.
+#' Unanticipated and news-dated series for a subset of measures, on Cloyne's
+#' dating convention (see split_conv in script 12, verified in script 17).
 series_for <- function(z) {
-  lo <- z$long == 1
-  list(unant = 100 * agg(z$imp_year_cal[!lo], z$imp_q_cal[!lo], z$peak_value[!lo]) / p$gdp_ann,
-       news  = 100 * agg(z$ann_year_cal[lo],  z$ann_q_cal[lo],  z$peak_value[lo])  / p$gdp_ann)
+  imp <- z$implement
+  swap <- !is.na(z$announce) & !is.na(imp) & imp < z$announce
+  imp[swap] <- z$announce[swap]
+  iq <- cloyne_quarter(z$implement, z$announce, retro_fix = TRUE)
+  aq <- cloyne_quarter(z$announce,  z$announce, retro_fix = FALSE)
+  gap <- as.numeric(imp - z$announce)
+  lo  <- !is.na(gap) & gap > 90
+  list(unant = 100 * agg(iq$year[!lo], iq$quarter[!lo], z$peak_value[!lo]) / p$gdp_ann,
+       news  = 100 * agg(aq$year[lo],  aq$quarter[lo],  z$peak_value[lo])  / p$gdp_ann,
+       lo = lo)
 }
 
 #' Peak response and the horizon it occurs at, with the whole path retained.
@@ -76,7 +84,7 @@ out <- list()
 for (k in c("unant","news")) {
   r <- lp_project(p$lrgdp, s_all[[k]], ok, X = data.frame(sp = sp), H = 0:16)
   out[[length(out)+1]] <- summarise(r, "All measures", k,
-                                    sum(if (k == "unant") all_x$long == 0 else all_x$long == 1),
+                                    sum(if (k == "unant") !s_all$lo else s_all$lo),
                                     sum(s_all[[k]] != 0))
 }
 
@@ -93,7 +101,7 @@ for (ti in inst) {
   z <- all_x[all_x$tax_h %in% ti, ]
   s <- series_for(z)
   for (k in c("unant","news")) {
-    nm <- sum(if (k == "unant") z$long == 0 else z$long == 1)
+    nm <- sum(if (k == "unant") !s$lo else s$lo)
     if (nm < MINMEAS) { msg("  %-22s %-9s n=%4d  too few to estimate", ti, k, nm); next }
     r <- lp_project(p$lrgdp, s[[k]], ok, X = data.frame(sp = sp), H = 0:16)
     out[[length(out)+1]] <- summarise(r, ti, k, nm, sum(s[[k]] != 0))
