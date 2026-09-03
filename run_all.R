@@ -26,5 +26,6 @@ source("R/14_lp_diagnostics.R")       # Paper 2: is the wrong-signed response re
 source("R/15_multipliers.R")          # Paper 2: multipliers overall and by instrument
 source("R/16_reconcile.R")            # Paper 2: BLOCKING - our series vs the published ones
 source("R/17_reconcile_build.R")      # Paper 2: prices each convention difference
+source("R/18_consumption.R")          # Paper 2: household consumption, the primary outcome
 
 cat("\nDone. Outputs in data-derived/ and output/.\n")
