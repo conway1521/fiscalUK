@@ -1,7 +1,16 @@
 # The Anticipation Content of Fiscal Policy: UK Tax Measures, 1945-2019
 
-**Draft, 3 September 2026.** Every number below is produced by `run_all.R` and logged in
-`RESULTS.md`. Institutional citations are in `SOURCES.md` and carry a verification warning.
+**Superseded, 3 September 2026.** `paper/fiscaluk-paper1.tex` is now the authoritative draft. It
+carries a round of corrections made after external review that are **not** reflected below: the
+120-day rationale is rewritten and a four-outcome robustness table added, the aggregation formulas
+behind the anticipation share are stated, Table 4's sample labels are corrected, the bootstrap is
+extended to all five significant instrument coefficients, the crisis nulls carry confidence intervals
+and minimum detectable effects, the 2010 break is shown not to survive revenue weighting, and the
+causal and multiplier language is weakened throughout. See RESULTS.md section 15. This file is kept
+as the record of the pre-review draft.
+
+Every number below is produced by `run_all.R` and logged in `RESULTS.md`. Institutional citations are
+in `SOURCES.md` and carry a verification warning.
 
 ---
 
