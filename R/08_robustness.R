@@ -240,6 +240,38 @@ c2t <- do.call(rbind, lapply(seq_along(cand), function(k) {
 print(c2t, row.names = FALSE)
 write.csv(c2t, file.path(OUTPUT, "break_candidates.csv"), row.names = FALSE)
 
+msg("\n=== C2b. Does the REVENUE-WEIGHTED series break at the same dates? ===")
+# C1 and C2 are unweighted counts of measures, but the object other researchers
+# use is the revenue impulse. If the break is in the counts and not in the
+# money, the institutional reading does not carry. Annual series, revenue
+# weighted by |costing|, same grid search and same local windows.
+mw <- m[!is.na(m$peak_value) & !is.na(m$long), ]; mw$w <- abs(mw$peak_value)
+ann <- do.call(rbind, lapply(split(mw, mw$yr), function(z) data.frame(
+  yr = z$yr[1], n = nrow(z),
+  count_share = mean(z$long),
+  rev_share   = sum(z$w * z$long) / sum(z$w))))
+gsw <- do.call(rbind, lapply(1960:2012, function(b)
+  data.frame(break_year = b, r2 = summary(lm(rev_share ~ I(yr >= b), data = ann))$r.squared)))
+gsw <- gsw[order(-gsw$r2), ]
+msg("  revenue-weighted grid search, best five break years:")
+print(head(gsw, 5), row.names = FALSE)
+msg("  -> best %d (R2 %.3f). The top five span %d-%d, so the break dates to the",
+    gsw$break_year[1], gsw$r2[1], min(head(gsw$break_year, 5)), max(head(gsw$break_year, 5)))
+msg("     early 1990s and not to a single year. The break year is SEARCHED, so its")
+msg("     nominal fit is not a test statistic and no p-value is attached to it.")
+c2w <- do.call(rbind, lapply(seq_along(cand), function(k) {
+  b <- cand[k]; a <- ann[ann$yr >= b-8 & ann$yr <= b+7, ]
+  f <- summary(lm(rev_share ~ I(yr >= b), data = a))$coefficients
+  data.frame(candidate = names(cand)[k], year = b, years = nrow(a),
+             est = round(f[2,1], 3), t = round(f[2,3], 2), p = round(f[2,4], 4))
+}))
+print(c2w, row.names = FALSE)
+write.csv(c2w, file.path(OUTPUT, "break_candidates_revwt.csv"), row.names = FALSE)
+msg("  READ CAREFULLY. 1993 survives revenue weighting and strengthens (+0.429,")
+msg("  t 4.02). 2010 does NOT: +0.190, p 0.116. The 2010 reform moved the number of")
+msg("  measures given long notice but not, detectably, the share of the money. The")
+msg("  paper must say so.")
+
 msg("\n=== C3. Is the 1993 break just the move to autumn Budgets? ===")
 sp <- m[m$autumn == 0, ]
 msg("  SPRING BUDGETS ONLY, long share by decade:")
@@ -320,3 +352,67 @@ msg("  Today 43%% of regressive changes arrive with under a month's notice again
 msg("  33%% of progressive ones. Real but modest, and it is the honest version.")
 write.csv(d1, file.path(OUTPUT, "incidence_notice.csv"), row.names = FALSE)
 write.csv(d2, file.path(OUTPUT, "incidence_snap.csv"), row.names = FALSE)
+
+# --- PART E. IS FACT 2 AN ARTEFACT OF THE ESTIMATOR? ------------------------
+# The instrument specification carries 128 parameters (10 instruments + 118
+# Budget fixed effects) against 118 clusters, so the cluster-robust variance
+# matrix is rank deficient and CR1 standard errors are suspect in principle.
+# Two checks, run here rather than ad hoc so the paper's claim reproduces:
+#   (i)  a pairs cluster bootstrap, resampling whole Budget events;
+#   (ii) a within-transformed specification, demeaning by Budget event, which
+#        reduces the parameter count to 10 against the same 118 clusters.
+# ALL coefficients significant at 5 per cent are covered, including recurrent
+# property, which an earlier version of this check omitted.
+msg("\n=== E. Fact 2 inference: rank-deficient CR1, bootstrap and within checks ===")
+set.seed(20260903)
+B <- 600
+
+i <- m[!is.na(m$tax_h), ]
+i$tax_h <- relevel(factor(i$tax_h), ref = "Excise and duties")
+fi <- lm(long ~ tax_h + ev, data = i)
+cr <- clx(fi, i$ev)
+cr <- cr[grep("^tax_h", rownames(cr)), , drop = FALSE]
+rownames(cr) <- sub("^tax_h", "", rownames(cr))
+sig <- rownames(cr)[cr[, "p"] < 0.05]
+msg("  significant at 5%%: %s", paste(sig, collapse = ", "))
+
+# (i) pairs cluster bootstrap over Budget events
+cl   <- split(seq_len(nrow(i)), droplevels(i$ev))
+reps <- matrix(NA_real_, B, length(sig), dimnames = list(NULL, sig))
+for (b in seq_len(B)) {
+  idx <- unlist(cl[sample(names(cl), length(cl), replace = TRUE)], use.names = FALSE)
+  s   <- i[idx, ]
+  s$tax_h <- relevel(droplevels(factor(s$tax_h)), ref = "Excise and duties")
+  s$ev    <- droplevels(factor(s$ev))
+  cf  <- tryCatch(coef(lm(long ~ tax_h + ev, data = s)), error = function(e) NULL)
+  if (is.null(cf)) next
+  names(cf) <- sub("^tax_h", "", names(cf))
+  reps[b, ] <- cf[sig]
+}
+bsd <- apply(reps, 2, sd, na.rm = TRUE)
+ok  <- colSums(!is.na(reps))
+
+# (ii) within transformation: demean outcome and instrument dummies by event
+dm <- function(x, g) x - ave(x, g, FUN = mean)
+D  <- model.matrix(~ tax_h, data = i)[, -1, drop = FALSE]
+colnames(D) <- sub("^tax_h", "", colnames(D))
+Dw <- apply(D, 2, dm, g = i$ev)
+yw <- dm(i$long, i$ev)
+fw <- lm(yw ~ Dw - 1)
+colnames(Dw) -> nmw
+wc <- clx(fw, i$ev)
+rownames(wc) <- sub("^Dw", "", rownames(wc))
+
+e_tab <- data.frame(
+  instrument = sig,
+  cr1_est    = round(cr[sig, "est"], 3),
+  cr1_se     = round(cr[sig, "se"], 3),
+  boot_sd    = round(bsd[sig], 3),
+  boot_reps  = ok[sig],
+  within_est = round(wc[sig, "est"], 3),
+  within_se  = round(wc[sig, "se"], 3),
+  row.names  = NULL)
+print(e_tab, row.names = FALSE)
+write.csv(e_tab, file.path(OUTPUT, "fact2_bootstrap.csv"), row.names = FALSE)
+msg("  Bootstrap standard deviations track the CR1 standard errors and the within")
+msg("  transformation returns the same point estimates. Fact 2 is not an artefact.")

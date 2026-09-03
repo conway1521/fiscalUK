@@ -762,3 +762,148 @@ matching that repo's own convention. **Not pushed**: pushing publishes it.
 4. Expand the draft towards the word limit if a fuller literature review is wanted.
 
 Nothing outstanding is analysis. Paper 1 is closed.
+
+---
+
+# 15. EXTERNAL REVIEW AND THE CORRECTIONS IT FORCED, 3 September 2026
+
+The LaTeX draft was put through Refine.ink, which returned five overall observations and ten
+detailed comments. Five of the detailed comments identified real defects, all verified against the
+code before being accepted. The rest asked for a larger paper and were declined explicitly in the
+text rather than silently.
+
+## 15.1 Defects confirmed and fixed
+
+**A stale figure caption.** `R/07_figures.R` hard-coded the Figure 4 annotation as +0.064 (z = 2.07,
+p = 0.038) across 47 Budget events, while the prose reported +0.075 (z = 2.37, p = 0.018) across 49.
+The prose was right; the caption was a literal left over from an earlier sample. The estimate is now
+written to `output/fact4_estimate.csv` by `06_analysis.R` and read by the figure code, so it cannot
+drift again.
+
+**The bootstrap omitted a significant coefficient.** The paper claimed a pairs cluster bootstrap over
+"the four significant coefficients" while Table 2 carries five at the 5 per cent level. Recurrent
+property, se 0.073, p 0.042, was missing. The check was also never in any script, only in a session
+transcript, which is a reproducibility failure in its own right given that Fiscal Studies requires
+replication materials. It is now Part E of `08_robustness.R`, covering all five, and it changes the
+reading of one row: the bootstrap standard deviation for recurrent property is 0.076 against a point
+estimate of 0.148, and 74 of the 600 replications contain no recurrent property measure at all. That
+row is now labelled suggestive in the paper. The other four are unaffected.
+
+**An unreconcilable difference.** The calendar section reported spring and autumn long-notice rates
+of 0.32 and 0.86 and then a difference of +0.365. The raw difference is 0.54; the 0.365 is the
+coefficient from `lm(long ~ autumn + factor(dec))`, conditional on decade, because autumn Budgets
+cluster in the later decades. The text now says so.
+
+**Table 4 compared samples it did not name.** The column labelled "This paper" was the all-measures
+row of Table 3, not the household-exogenous row, under a table titled "anticipation share of the
+exogenous impulse", and the final era was labelled 2000-20 against Table 3's 2000-19. The table is
+retitled, both columns are labelled with their actual sample, and a note states that the two are not
+like for like and gives the household-exogenous figures for comparison.
+
+**The 120-day rationale did not justify 120.** The stated reason, a March Budget implementing on
+6 April, is a three-week gap that falls below 90 days as well, so it argued against the fiscal-year
+outcome and not for widening the day count. The real case is a late-autumn or December Budget
+implementing on the following April, about 110 days out, which a 90-day rule counts as anticipated
+when it is the routine start of the next fiscal year. The paragraph is rewritten to say that, with
+the magnitude: 94 measures, 4.2 per cent of the sample, fall between 91 and 119 days, and 32 of them
+are autumn or winter Budgets pinned to the following April.
+
+The same comment noted that the alternative outcomes were promised as robustness "throughout" and
+reported nowhere. They now are. `output/outcome_robustness.csv` and Table 1 of the paper give the two
+headline results on four outcomes:
+
+| Outcome | 2010s trend | z | Social security | z |
+|---|---|---|---|---|
+| 120+ days (primary) | +0.483 | 6.84 | +0.385 | 7.48 |
+| 90+ days (Cloyne's own rule) | +0.506 | 7.96 | +0.356 | 6.93 |
+| Crosses the fiscal year | +0.634 | 9.68 | +0.543 | 11.59 |
+| Lag in quarters | +2.917 | 11.66 | +1.823 | 3.90 |
+
+The threshold choice does not matter. On Cloyne's 90-day rule the results are, if anything, slightly
+stronger on the trend and slightly weaker on the instrument.
+
+## 15.2 A new result, forced by the review
+
+The reviewer objected that the break tests are run on unweighted measure counts while the object of
+Section 8 is the revenue impulse, and asked whether the revenue-weighted series breaks at the same
+dates. It does, at one date and not the other. Part C2b of `08_robustness.R` repeats the grid search
+and the local windows on the annual revenue-weighted long-notice share:
+
+| Candidate | Count basis | Revenue-weighted basis |
+|---|---|---|
+| 1993 unified autumn Budget | +0.288 (z 6.96) | **+0.429 (t 4.02, p 0.001)** |
+| 1997 return to spring | +0.026 (p 0.72) | +0.016 (p 0.91) |
+| 2010 tax policy framework | +0.257 (z 3.20) | **+0.190 (p 0.116), fails** |
+| 2011 draft-clause consultation | +0.157 (p 0.072) | +0.133 (p 0.29) |
+| 2017 single fiscal event | +0.108 (p 0.23) | −0.154 (p 0.41) |
+
+The grid search on the revenue-weighted series also picks 1993, with a higher R² (0.431 against
+0.142 on counts). **The 2010 reform moved the number of measures given long notice but not,
+detectably, the share of the money.** The paper now says this and drops 2010 from the abstract. Only
+1993 is supported on both bases.
+
+A second concession on the same section: the break year is searched, so its nominal fit is not a test
+statistic. The five best-fitting years span 1989 to 1995. The paper now dates the change to the early
+1990s rather than to 1993 exactly, and the closing paragraph of Section 9 states plainly that this is
+an institutional interpretation consistent with the data and not a demonstration of cause.
+
+## 15.3 Weakened claims
+
+Four places where the prose outran the design, all now bounded in the text.
+
+**The crisis nulls.** The paper asserted "this is not merely an absence of evidence". It was. The
+estimates are now reported with intervals and minimum detectable effects (`output/crisis_nulls.csv`):
++0.047 on 753 endogenous measures, 159 treated, interval −0.113 to +0.206, MDE 0.228; +0.070 on 1,208
+exogenous measures, 84 treated, interval −0.233 to +0.372, MDE 0.432. These bounds exclude very
+little. The section now says so and rests the argument on the 2008-09 descriptive contrast, which is
+itself restated honestly: 95.5 per cent of 22 exogenous crisis measures against 34.4 per cent of the
+195 announced elsewhere in the decade, on the primary outcome. The previously quoted 93.5 against
+49.5 mixed two different outcome definitions and is retracted.
+
+**The election result.** Now framed as a descriptive association, with the three reasons it is not
+identified stated: pre-2011 election dates were themselves a government choice, the test conditions
+on a realised rather than an expected date, and Budget fixed effects do not absorb within-Budget
+differences in instrument mix that correlate with sign.
+
+**The instrument coefficients.** "Leaves the choice of instrument" is replaced by an association,
+with a pointer to the calendar section for the mechanism.
+
+**The multiplier consequence.** The claim that pooling biases multiplier estimates, and that the
+split series is "the minimum correction", is not established here: it needs a model of how news
+enters the estimator and evidence that anticipated and unanticipated UK measures generate different
+responses. Both are Paper 2. The text now claims non-stationary information content in the
+instrument, which is a property of the series and is demonstrated, and describes the split series as
+what a researcher would need to test whether it matters.
+
+## 15.4 A definitional gap, closed
+
+Three separate comments reduced to the same omission: the aggregation formulas were never written
+down. Section 8 now states them. The anticipation share is the absolute-costing-weighted mean of the
+long-notice indicator over measures dated by implementation, so signs and netting do not arise; the
+revenue-weighted lead is the same weighting applied to the day gap censored at zero; the quarterly
+foreseen and unforeseen figures are mean absolute *net quarterly* impulses as a share of GDP, which
+does net within the quarter, and the dispersion figure is the standard deviation of the signed
+series. For the external comparison the share is one minus the ratio of summed absolute quarterly
+values, which answers the reviewer's question about whether it is an anticipated or an unanticipated
+ratio.
+
+## 15.5 Declined, and why
+
+The stratified audit of first public information against the formal announcement date, search-
+corrected critical values for the break date, formal equivalence bounds on the crisis nulls, and a
+benchmark multiplier re-estimation. The first is addressed by narrowing the terminology instead:
+Section 2 now says the announcement date is the scored, dated commitment rather than the moment
+information arrived, notes that post-2010 consultation moved the information set earlier for many
+measures, and observes that this makes the measured lead a lower bound whose slack is largest in the
+period where the lead is longest, so the documented rise understates the true one. The last is Paper
+2, and saying so is a better answer than attempting it.
+
+## 15.6 State
+
+`run_all.R` runs 01 through 10 clean. `paper/fiscaluk-paper1.tex` compiles to 15 pages with no
+undefined references, roughly 5,450 words against the 7,500-word limit, no em dashes. `PAPER1.md` is
+marked superseded and kept as the record of the pre-review draft.
+
+**The website PDF is now stale.** `conway1521.github.io/assets/papers/fiscal-anticipation.pdf` is the
+13-page pre-review version, in a local commit that was never pushed. It should be replaced before
+that commit goes anywhere.

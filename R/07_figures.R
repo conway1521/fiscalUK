@@ -125,7 +125,10 @@ p3b <- ggplot(d3b, aes(decade, share, colour = what)) +
 sv(p3b, "fig3b_clock_migration")
 
 # --- FIG 4: elections -------------------------------------------------------
-e <- read.csv(file.path(OUTPUT, "fact4_elections.csv"))
+e  <- read.csv(file.path(OUTPUT, "fact4_elections.csv"))
+# Read the estimate rather than retyping it: the caption went stale once before.
+ee <- read.csv(file.path(OUTPUT, "fact4_estimate.csv"))
+ee <- ee[ee$window == "6-24 months", ]
 e$sign <- factor(ifelse(e$sign == "rise", "Tax rises", "Tax cuts"),
                  levels = c("Tax cuts", "Tax rises"))
 p4 <- ggplot(e, aes(sign, rate, fill = sign)) +
@@ -136,9 +139,9 @@ p4 <- ggplot(e, aes(sign, rate, fill = sign)) +
   labs(title = "Tax rises are scheduled past the next election",
        subtitle = "Share of measures whose implementation date falls after the next general election,\nfor measures announced 6-24 months before that election",
        x = NULL, y = "Share landing after the election",
-       caption = sprintf(paste0("n = %s measures across %d Budget events. Within-Budget estimate +0.064 ",
-                                "(z = 2.07, p = 0.038),\nstandard errors clustered on Budget event."),
-                         format(sum(e$n), big.mark = ","), 47)) +
+       caption = sprintf(paste0("n = %s measures across %d Budget events. Within-Budget estimate %+.3f ",
+                                "(z = %.2f, p = %.3f),\nstandard errors clustered on Budget event."),
+                         format(sum(e$n), big.mark = ","), ee$events, ee$est, ee$z, ee$p)) +
   theme_p1
 sv(p4, "fig4_elections", 7.2, 4.6)
 
