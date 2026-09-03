@@ -658,3 +658,69 @@ Cloyne's original, and report the agreement. If it does not, say so, because tha
 the justification for our own coding and turns a weakness into the paper's reason for existing.
 
 This does not change any result in §1 to §10.
+
+---
+
+# 13. EXTERNAL VALIDATION, AND A CORRECTION TO THE NOVELTY CLAIM (3 September 2026)
+
+Run by `R/10_external_validation.R`. Following up §12 turned the competing dataset into the paper's
+strongest robustness check, and also corrected an overclaim of mine.
+
+## 13.1 The finding replicates on data we did not build
+
+The replication package for Cloyne, Hürtgen and Dimsdale (2025, *JPE* 133(2), 568-603), at Harvard
+Dataverse doi:10.7910/DVN/JVNAPS, publishes their quarterly exogenous shock series in two variants:
+a baseline of all narrative shocks, and an **unanticipated** variant restricted to measures
+implemented inside Cloyne's 90-day window. The ratio is an anticipation share, built by other
+researchers, on their coding, over a century, using their threshold.
+
+| Era | Theirs (90-day) | Ours (120-day) |
+|---|---|---|
+| 1920-44 | 0.022 | not covered |
+| 1945-79 | 0.248 | 0.184 |
+| 1980-99 | 0.420 | 0.384 |
+| 2000-20 | **0.697** | **0.699** |
+
+Agreement in shape and level, closest where the sample is densest. Their decade series carries the
+break too: **0.286 in the 1980s against 0.614 in the 1990s**, which is where §7.4 dates it
+independently from measure-level data. Their longer sample strengthens the result: in 1920-44 the
+anticipation share was 0.022, so on a century view it has risen from almost nothing to roughly
+four fifths.
+
+**What this settles.** Fact 1 and §7.2 are not artefacts of our coding, our threshold, our splice or
+our sample period. The single most likely referee objection is now answered pre-emptively, with the
+objector's own data.
+
+## 13.2 R9. Ninth retraction, on priority rather than on a result
+
+**"This paper introduces the distinction between anticipated and unanticipated tax measures." FALSE,
+and it was never true.** Cloyne (2013), following Mertens and Ravn (2012), classifies a tax change as
+anticipated when the implementation lag exceeds 90 days. Our 120-day threshold is a variant of an
+established convention, widened to exclude the March-Budget-to-6-April case, not an invention.
+
+The paper's introduction and §2.2 now say so explicitly. The contribution is narrower and still real:
+**treating the incidence of anticipation as a time series**, showing it is systematically distributed
+across instruments and the calendar, and dating its movement to identifiable reforms. The ingredients
+sat in a top-five journal's replication archive and were used there as a robustness check rather than
+examined, which is the gap stated as concretely as it can be.
+
+## 13.3 Their package does not supersede our measure-level work
+
+The Dataverse package ships **aggregated quarterly series**, not measure-level announcement dates.
+It therefore cannot produce Facts 2, 3 or 4, all of which need the measure. That is the honest answer
+to "why did you not use their data": for the aggregate quantity we now do, and for the measure-level
+results it does not exist in public form. Obtaining the measure-level 2024 dataset (SSRN 4909051)
+remains worth doing, since it would allow direct cross-validation of the modern half.
+
+## 13.4 Hansard verification closed
+
+The 9 December 2010 ministerial statement was checked against **three independent Internet Archive
+captures (2013, 2020, 2025)**, all containing Gauke's name and the three-month wording. The library
+visit is no longer necessary and the caveat is downgraded in `SOURCES.md` and `PAPER1.md`.
+
+## 13.5 Journal fit
+
+Fiscal Studies: 7,500 words preferred, abstract capped at 200, JEL required, .docx or LaTeX via
+Research Exchange, single anonymised review, full replication materials required. The draft is
+roughly 5,000 words with a 202-word abstract, so there is room to expand and the replication
+requirement is already met by `run_all.R`.
