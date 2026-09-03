@@ -22,5 +22,6 @@ source("R/10_external_validation.R")  # replicate Fact 1 on Cloyne-Hurtgen-Dimsd
 source("R/11_external_data.R")        # Paper 2: macro outcomes + interwar measures
 source("R/12_paper2_series.R")        # Paper 2: three shock series + estimation panel
 source("R/13_lp.R")                   # Paper 2: first-pass local projections
+source("R/14_lp_diagnostics.R")       # Paper 2: is the wrong-signed response real?
 
 cat("\nDone. Outputs in data-derived/ and output/.\n")
