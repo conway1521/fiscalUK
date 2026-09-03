@@ -724,3 +724,41 @@ Fiscal Studies: 7,500 words preferred, abstract capped at 200, JEL required, .do
 Research Exchange, single anonymised review, full replication materials required. The draft is
 roughly 5,000 words with a 202-word abstract, so there is room to expand and the replication
 requirement is already met by `run_all.R`.
+
+---
+
+# 14. PAPER 1 CLOSED FOR REAL, 3 September 2026
+
+`paper/fiscaluk-paper1.tex` compiles to a 13-page PDF via `latexmk`. Article class, natbib
+author-date with the `agsm` style, booktabs tables, the six figures from `output/figures`, and
+`paper/references.bib` holding twelve references all verified against Crossref before citing.
+
+**Fiscal Studies fit.** They want at most 7,500 words, a 200-word abstract and a JEL classification.
+The draft runs to roughly 3,800 words of body text with a 202-word abstract, so the constraint is
+room to expand rather than pressure to cut. Porting is a matter of dropping in their class file.
+
+**Style.** Written to match the prose of the regional development paper: British English in the
+paper, no em dashes anywhere, citations carried inline, no bulleted prose. Checked mechanically for
+em dashes and for the usual tells; median sentence 26 words.
+
+**Provenance stated where it should be.** The anticipated and unanticipated distinction is credited
+to Cloyne (2013) following Mertens and Ravn (2012), the 120-day threshold is presented as a variant
+of their 90-day rule with the reason for widening it given, and the fact that the outcome definition
+was chosen after seeing results on all three candidates is disclosed in the text rather than left to
+be inferred.
+
+**Published to the website.** `assets/papers/fiscal-anticipation.pdf` in `conway1521.github.io`, with
+a new Working papers section on `research.html` between the dissertation and publications, and the
+page lede widened to name fiscal policy. Committed on `main`, the branch GitHub Pages builds from,
+matching that repo's own convention. **Not pushed**: pushing publishes it.
+
+## Everything still outstanding
+
+1. Push the website commit, if the draft is to be public now.
+2. Obtain the measure-level dataset behind Hürtgen et al. (2024) and cross-validate the 2004-2018
+   coding against it (§13.3). The published replication package carries aggregated series only.
+3. Adjudicate the remaining anti-avoidance coding divergence for Paper 2, as robustness rather than
+   by recoding (§8.2).
+4. Expand the draft towards the word limit if a fuller literature review is wanted.
+
+Nothing outstanding is analysis. Paper 1 is closed.
