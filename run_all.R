@@ -23,5 +23,7 @@ source("R/11_external_data.R")        # Paper 2: macro outcomes + interwar measu
 source("R/12_paper2_series.R")        # Paper 2: three shock series + estimation panel
 source("R/13_lp.R")                   # Paper 2: first-pass local projections
 source("R/14_lp_diagnostics.R")       # Paper 2: is the wrong-signed response real?
+source("R/15_multipliers.R")          # Paper 2: multipliers overall and by instrument
+source("R/16_reconcile.R")            # Paper 2: BLOCKING - our series vs the published ones
 
 cat("\nDone. Outputs in data-derived/ and output/.\n")
