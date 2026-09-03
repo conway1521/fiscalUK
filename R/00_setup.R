@@ -220,3 +220,27 @@ lp_project <- function(y, s, ok, X = NULL, H = 0:16, nlag = 4, minobs = 40,
                lo = b - 1.96*se, hi = b + 1.96*se, t = b/se)
   }))
 }
+
+#' Cloyne's (2013) quarter assignment: shift the implementation date forward 45
+#' days, then take the calendar quarter of the result. His stated rationale is
+#' that action in the second half of a quarter belongs to the next one.
+#'
+#' This is NOT the same as `assign_quarter`, which pushes a date past the 15th
+#' of a month into the next month. The two disagree often enough to matter:
+#' rebuilding his published surprise series with our rule instead of his drops
+#' the correlation with it from 1.000 to 0.932. Paper 1 uses `assign_quarter`
+#' and stays on it; Paper 2 uses this, because comparability with the published
+#' multiplier literature is the point there.
+#'
+#' @param retro_fix replace an implementation date that precedes its own
+#'   announcement with the announcement date, as he does.
+cloyne_quarter <- function(implement, announce = NULL, retro_fix = TRUE) {
+  imp <- implement
+  if (retro_fix && !is.null(announce)) {
+    swap <- !is.na(announce) & !is.na(imp) & imp < announce
+    imp[swap] <- announce[swap]
+  }
+  sh <- imp + 45
+  data.frame(year    = as.integer(format(sh, "%Y")),
+             quarter = (as.integer(format(sh, "%m")) - 1L) %/% 3L + 1L)
+}

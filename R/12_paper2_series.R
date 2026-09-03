@@ -3,20 +3,30 @@
 #
 # THE THREE SERIES. An anticipated measure is two events, and they must never
 # enter one regression:
-#   unant     gap < 120 days, dated by IMPLEMENTATION. Announcement and effect
-#             coincide, so there is one event and one date.
-#   ant_news  gap >= 120 days, dated by ANNOUNCEMENT. When the information
+#   unant     gap at or under 90 days, dated by IMPLEMENTATION. Announcement
+#             and effect nearly coincide, so there is one event and one date.
+#   ant_news  gap over 90 days, dated by ANNOUNCEMENT. When the information
 #             arrived.
 #   ant_imp   the same measures, dated by IMPLEMENTATION. When the money moved.
 # `ant_news` and `ant_imp` are the same pounds shifted in time. `ant_news` and
 # `unant` are disjoint sets of measures and are the pair that can serve as
 # separate instruments.
 #
-# SCALE. 100 * GBP million / annualised nominal GDP, where annualised GDP is
-# four times the quarterly figure in the JPE macro panel. Checked against their
-# published exogenous series: over 1945-79 theirs has sd 0.258 and ours 0.375,
-# over 1980-99 0.195 against 0.219, over 2000-18 0.092 against 0.105. Same
-# order, with ours larger because our sample is wider. The denominators agree.
+# SCALE AND DATING FOLLOW CLOYNE (2013) EXACTLY. 100 * GBP million / annualised
+# nominal GDP; the implementation date pushed forward 45 days before its quarter
+# is taken; an implementation date preceding its own announcement replaced by
+# the announcement; a 90-day surprise threshold. Script 17 rebuilds his
+# published series from his raw file under these rules and returns it at a
+# correlation of 1.0000 with a maximum difference of zero over 220 quarters.
+#
+# The alternative was Paper 1's own convention, which pushes a date past the
+# 15th of a month into the next month and uses a 120-day threshold. It is
+# defensible and Paper 1 keeps it, but here comparability with the published
+# multiplier literature is the point, and the difference is not small: on Paper
+# 1's rules the correlation with Cloyne's published series is 0.864. The
+# threshold costs the most of the three, then the quarter rule, then
+# retroactivity; the GDP vintage is irrelevant. Both are built, the second under
+# the _p1 suffix.
 #
 # SAMPLE: EXOGENOUS, ALL MEASURES. Paper 1's shock split restricted to
 # household-relevant measures, which forced reliance on Cloyne's `Group` field,
@@ -70,24 +80,52 @@ cnt <- function(yr, qt, val) {
   as.numeric(out)
 }
 
+#' Split a measure frame into anticipated and surprise, on a dating convention.
+#'
+#' "cloyne" reproduces Cloyne (2013) exactly: the implementation date is pushed
+#' forward 45 days before its quarter is taken, an implementation date preceding
+#' its own announcement is replaced by the announcement, and the surprise
+#' threshold is 90 days. Script 17 verifies this returns his published series at
+#' a correlation of 1.0000 with a maximum difference of zero over 220 quarters.
+#' "paper1" is our own convention, kept so the choice can be tested.
+split_conv <- function(z, conv) {
+  if (conv == "cloyne") {
+    imp <- z$implement
+    swap <- !is.na(z$announce) & !is.na(imp) & imp < z$announce
+    imp[swap] <- z$announce[swap]
+    iq  <- cloyne_quarter(z$implement, z$announce, retro_fix = TRUE)
+    aq  <- cloyne_quarter(z$announce,  z$announce, retro_fix = FALSE)
+    gap <- as.numeric(imp - z$announce)
+    list(iq = iq, aq = aq, lo = !is.na(gap) & gap > 90)
+  } else {
+    list(iq = data.frame(year = z$imp_year_cal, quarter = z$imp_q_cal),
+         aq = data.frame(year = z$ann_year_cal, quarter = z$ann_q_cal),
+         lo = z$long %in% 1)
+  }
+}
+
 #' Build the three series for a given subsample.
-build <- function(z, tag) {
-  lo <- z$long %in% 1
+build <- function(z, tag, conv = "cloyne") {
+  k <- split_conv(z, conv); lo <- k$lo; iq <- k$iq; aq <- k$aq
   out <- data.frame(
-    ant_news = 100 * agg(z$ann_year_cal[lo], z$ann_q_cal[lo], z$peak_value[lo]) / grid$gdp_ann,
-    ant_imp  = 100 * agg(z$imp_year_cal[lo], z$imp_q_cal[lo], z$peak_value[lo]) / grid$gdp_ann,
-    unant    = 100 * agg(z$imp_year_cal[!lo], z$imp_q_cal[!lo], z$peak_value[!lo]) / grid$gdp_ann,
-    n_news   = cnt(z$ann_year_cal[lo], z$ann_q_cal[lo], z$peak_value[lo]),
-    n_unant  = cnt(z$imp_year_cal[!lo], z$imp_q_cal[!lo], z$peak_value[!lo]))
+    ant_news = 100 * agg(aq$year[lo],  aq$quarter[lo],  z$peak_value[lo])  / grid$gdp_ann,
+    ant_imp  = 100 * agg(iq$year[lo],  iq$quarter[lo],  z$peak_value[lo])  / grid$gdp_ann,
+    unant    = 100 * agg(iq$year[!lo], iq$quarter[!lo], z$peak_value[!lo]) / grid$gdp_ann,
+    n_news   = cnt(aq$year[lo],  aq$quarter[lo],  z$peak_value[lo]),
+    n_unant  = cnt(iq$year[!lo], iq$quarter[!lo], z$peak_value[!lo]))
   names(out) <- paste0(names(out), tag)
   out
 }
 
-ser <- cbind(grid[, c("date","year","quarter","gdp_ann")], build(d, ""))
+# Baseline is Cloyne's convention, so Paper 2's estimates are comparable with
+# the published multiplier literature. Paper 1's convention is carried alongside
+# under the _p1 suffix so the difference is reported rather than assumed.
+ser <- cbind(grid[, c("date","year","quarter","gdp_ann")],
+             build(d, "", "cloyne"), build(d, "_p1", "paper1"))
 
 # Household-restricted variant, postwar only, to test what the restriction costs.
 dh <- d[d$target %in% "H", ]
-ser <- cbind(ser, build(dh, "_hh"))
+ser <- cbind(ser, build(dh, "_hh", "cloyne"))
 msg("household-restricted variant: %d of %d measures carry target = H",
     nrow(dh), nrow(d))
 
