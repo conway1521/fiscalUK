@@ -20,5 +20,7 @@ source("R/08_robustness.R")    # seam tests, anticipation share, break dating
 source("R/09_shock_split.R")   # anticipated/unanticipated series for Paper 2
 source("R/10_external_validation.R")  # replicate Fact 1 on Cloyne-Hurtgen-Dimsdale JPE data
 source("R/11_external_data.R")        # Paper 2: macro outcomes + interwar measures
+source("R/12_paper2_series.R")        # Paper 2: three shock series + estimation panel
+source("R/13_lp.R")                   # Paper 2: first-pass local projections
 
 cat("\nDone. Outputs in data-derived/ and output/.\n")
