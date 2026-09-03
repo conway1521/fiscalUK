@@ -34,47 +34,17 @@ H     <- 0:16
 NLAG  <- 4
 SAMP  <- c(1945, 2018)
 
-#' Newey-West HAC variance for lm, bandwidth L (Bartlett kernel).
-nw <- function(fit, L) {
-  X <- model.matrix(fit); u <- residuals(fit); n <- nrow(X); k <- ncol(X)
-  XtXi <- solve(crossprod(X))
-  S <- crossprod(X * u)
-  if (L > 0) for (l in seq_len(L)) {
-    w <- 1 - l/(L + 1)
-    G <- crossprod(X[(l+1):n, , drop = FALSE] * u[(l+1):n],
-                   X[1:(n-l), , drop = FALSE] * u[1:(n-l)])
-    S <- S + w * (G + t(G))
-  }
-  V <- XtXi %*% S %*% XtXi * (n/(n - k))
-  sqrt(diag(V))
-}
-
-lags <- function(x, k) sapply(seq_len(k), function(i) c(rep(NA, i), head(x, -i)))
+# The projection machinery lives in 00_setup.R (nw_se, lag_mat, lp_project)
+# because script 14 needs the same code with placebo horizons and extra
+# controls.
 
 #' Local projections of log real GDP on one shock series.
 lp <- function(dat, shock, label) {
-  dat <- dat[order(dat$date), ]
-  y   <- dat$lrgdp
-  s   <- dat[[shock]]
-  dg  <- c(NA, 100 * diff(y))                       # quarterly GDP growth
-  Ls  <- lags(s, NLAG); Lg <- lags(dg, NLAG)
-  sp  <- dat$X_SpendToGDP; sp[is.na(sp)] <- 0
-  out <- do.call(rbind, lapply(H, function(h) {
-    # y[t+h] by index, out-of-range giving NA. tail(y, -0) returns an empty
-    # vector, so the shift must not be written with tail().
-    yh <- 100 * (y[seq_along(y) + h] - c(NA, head(y, -1)))
-    df <- data.frame(yh = yh, s = s, sp = sp, Ls, Lg)
-    ok <- complete.cases(df) & dat$year >= SAMP[1] & dat$year <= SAMP[2]
-    df <- df[ok, ]
-    if (nrow(df) < 40) return(NULL)
-    f  <- lm(yh ~ ., data = df)
-    se <- nw(f, h + 1)["s"]
-    b  <- coef(f)["s"]
-    data.frame(series = label, h = h, n = nrow(df), b = b, se = se,
-               lo = b - 1.96*se, hi = b + 1.96*se, t = b/se)
-  }))
-  rownames(out) <- NULL
-  out
+  ok <- dat$year >= SAMP[1] & dat$year <= SAMP[2]
+  sp <- dat$X_SpendToGDP; sp[is.na(sp)] <- 0
+  out <- lp_project(dat$lrgdp, dat[[shock]], ok, X = data.frame(sp = sp),
+                    H = H, nlag = NLAG)
+  cbind(series = label, out)
 }
 
 res <- do.call(rbind, lapply(

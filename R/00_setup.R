@@ -156,3 +156,67 @@ weighted_median <- function(x, w) {
 }
 
 msg <- function(...) cat(sprintf(...), "\n", sep = "")
+
+# --- local projection machinery (scripts 13, 14) ----------------------------
+
+#' Newey-West HAC standard errors for lm, Bartlett kernel, bandwidth L.
+#' Local projections overlap h steps, so L = h + 1 is the usual choice.
+nw_se <- function(fit, L) {
+  X <- model.matrix(fit); u <- residuals(fit); n <- nrow(X); k <- ncol(X)
+  XtXi <- solve(crossprod(X))
+  S <- crossprod(X * u)
+  if (L > 0) for (l in seq_len(L)) {
+    w <- 1 - l/(L + 1)
+    G <- crossprod(X[(l+1):n, , drop = FALSE] * u[(l+1):n],
+                   X[1:(n-l), , drop = FALSE] * u[1:(n-l)])
+    S <- S + w * (G + t(G))
+  }
+  sqrt(diag(XtXi %*% S %*% XtXi * (n/(n - k))))
+}
+
+#' k lags of x as a matrix.
+lag_mat <- function(x, k) sapply(seq_len(k), function(i) c(rep(NA, i), head(x, -i)))
+
+#' Jorda local projections of a log level `y` on shock `s`.
+#'
+#' Horizons may be NEGATIVE. A negative horizon is a placebo: it asks what
+#' output was doing BEFORE the shock landed, and a valid shock must show
+#' nothing there.
+#'
+#' @param y      log level of the outcome
+#' @param s      the shock series
+#' @param ok     logical, which observations are in the estimation sample
+#' @param X      optional data.frame of extra regressors, contemporaneous
+#' @param H      horizons
+#' @param nlag   lags of the shock and of outcome growth to include
+#' @param minobs refuse to estimate below this many observations
+#' @param nlag_y  lags of outcome growth. MUST be 0 for placebo (negative)
+#'   horizons: y[t+h] - y[t-1] with h negative is exactly minus the sum of
+#'   growth over the intervening quarters, so for |h| <= nlag_y the dependent
+#'   variable is spanned by the included growth lags and the shock coefficient
+#'   is driven to zero by construction.
+lp_project <- function(y, s, ok, X = NULL, H = 0:16, nlag = 4, minobs = 40,
+                       nlag_y = nlag) {
+  dg <- c(NA, 100 * diff(y))
+  base <- data.frame(s = s, lag_mat(s, nlag))
+  names(base) <- c("s", paste0("Ls", seq_len(nlag)))
+  if (nlag_y > 0) {
+    G <- as.data.frame(lag_mat(dg, nlag_y))
+    names(G) <- paste0("Lg", seq_len(nlag_y))
+    base <- cbind(base, G)
+  }
+  if (!is.null(X)) base <- cbind(base, X)
+  do.call(rbind, lapply(H, function(h) {
+    idx <- seq_along(y) + h
+    idx[idx < 1 | idx > length(y)] <- NA
+    yh <- 100 * (y[idx] - c(NA, head(y, -1)))
+    df <- cbind(yh = yh, base)
+    keep <- complete.cases(df) & ok
+    df <- df[keep, , drop = FALSE]
+    if (nrow(df) < minobs) return(NULL)
+    f  <- lm(yh ~ ., data = df)
+    b  <- coef(f)[["s"]]; se <- nw_se(f, abs(h) + 1)[["s"]]
+    data.frame(h = h, n = nrow(df), b = b, se = se,
+               lo = b - 1.96*se, hi = b + 1.96*se, t = b/se)
+  }))
+}
