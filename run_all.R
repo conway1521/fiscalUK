@@ -27,5 +27,6 @@ source("R/15_multipliers.R")          # Paper 2: multipliers overall and by inst
 source("R/16_reconcile.R")            # Paper 2: BLOCKING - our series vs the published ones
 source("R/17_reconcile_build.R")      # Paper 2: prices each convention difference
 source("R/18_consumption.R")          # Paper 2: household consumption, the primary outcome
+source("R/19_incidence.R")            # Paper 2: distributional incidence from public ONS data
 
 cat("\nDone. Outputs in data-derived/ and output/.\n")
