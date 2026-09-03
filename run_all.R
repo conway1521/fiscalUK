@@ -19,5 +19,6 @@ source("R/07_figures.R")       # Paper 1 figures
 source("R/08_robustness.R")    # seam tests, anticipation share, break dating
 source("R/09_shock_split.R")   # anticipated/unanticipated series for Paper 2
 source("R/10_external_validation.R")  # replicate Fact 1 on Cloyne-Hurtgen-Dimsdale JPE data
+source("R/11_external_data.R")        # Paper 2: macro outcomes + interwar measures
 
 cat("\nDone. Outputs in data-derived/ and output/.\n")
