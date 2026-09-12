@@ -31,5 +31,6 @@ source("R/19_incidence.R")            # Paper 2: distributional incidence from p
 source("R/20_state_dependence.R")     # Paper 2: what survives - state-dependent multipliers
 source("R/21_p2_figures.R")          # Paper 2: figures
 source("R/22_distribution.R")         # Paper 2: the distributional half, third attempt
+source("R/23_anticipation_dryrun.R")  # Paper 2: is the announcement series estimable?
 
 cat("\nDone. Outputs in data-derived/ and output/.\n")

@@ -221,6 +221,51 @@ lp_project <- function(y, s, ok, X = NULL, H = 0:16, nlag = 4, minobs = 40,
   }))
 }
 
+# --- decile-panel machinery (scripts 22, 23) --------------------------------
+
+#' Two-way within transform, exact on a balanced panel. Frisch-Waugh: running
+#' OLS on the transformed variables reproduces the coefficient from a
+#' regression with unit and time dummies, but estimates the covariance on a
+#' handful of parameters rather than fifty dummies.
+demean2 <- function(x, i, t) {
+  x - ave(x, i, FUN = function(z) mean(z, na.rm = TRUE)) -
+      ave(x, t, FUN = function(z) mean(z, na.rm = TRUE)) + mean(x, na.rm = TRUE)
+}
+
+#' Driscoll-Kraay standard errors: sum the scores across units within a period,
+#' then Newey-West the resulting time series. Required whenever every unit sees
+#' the same shock, which is what makes a decile panel smaller than its row count
+#' suggests.
+#' @param nunit number of cross-sectional units, for the degrees-of-freedom
+#'   correction that accounts for the absorbed fixed effects.
+dk_se <- function(X, u, tidx, L, nunit) {
+  X <- as.matrix(X); n <- nrow(X); k <- ncol(X)
+  XtXi <- solve(crossprod(X))
+  H <- rowsum(X * u, tidx)                       # one row per period
+  S <- crossprod(H)
+  if (L > 0) for (l in seq_len(L)) {
+    w <- 1 - l/(L + 1); m <- nrow(H)
+    if (m - l < 1) break
+    G <- crossprod(H[(l+1):m, , drop = FALSE], H[1:(m-l), , drop = FALSE])
+    S <- S + w * (G + t(G))
+  }
+  sqrt(diag(XtXi %*% S %*% XtXi) * (n / (n - k - nunit - nrow(H) + 1)))
+}
+
+#' Aggregate a quarterly series over the four quarters of an ONS ETB year.
+#' The ETB sheets are calendar years to 1993 and April-starting fiscal years
+#' from 1994-95, so both the shock and any deflator must be aggregated on
+#' whichever basis the sheet uses or the alignment is off by up to three
+#' quarters.
+#' @param qkey year*10 + quarter, matching `v`.
+over_ons_year <- function(v, qkey, y0, fiscal, f = sum) {
+  vapply(seq_along(y0), function(i) {
+    q <- if (fiscal[i]) c(y0[i]*10L + 2:4, (y0[i]+1L)*10L + 1L) else y0[i]*10L + 1:4
+    x <- v[match(q, qkey)]
+    if (anyNA(x)) NA_real_ else f(x)
+  }, numeric(1))
+}
+
 #' Cloyne's (2013) quarter assignment: shift the implementation date forward 45
 #' days, then take the calendar quarter of the result. His stated rationale is
 #' that action in the second half of a quarter belongs to the next one.

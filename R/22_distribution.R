@@ -106,15 +106,7 @@ msg("    max |error| %.2f pounds against a mean gross income of %.0f",
 p <- readRDS(file.path(DERIVED, "p2_panel.rds")); p <- p[order(p$date), ]
 qkey <- p$year * 10L + p$quarter
 
-#' Sum (or mean) a quarterly series over the four quarters of an ONS year.
-#' Calendar sheets take Q1-Q4 of y0; fiscal sheets take y0Q2 to (y0+1)Q1.
-over_year <- function(v, y0, fiscal, f = sum) {
-  vapply(seq_along(y0), function(i) {
-    q <- if (fiscal[i]) c(y0[i]*10L + 2:4, (y0[i]+1L)*10L + 1L) else y0[i]*10L + 1:4
-    x <- v[match(q, qkey)]
-    if (anyNA(x)) NA_real_ else f(x)
-  }, numeric(1))
-}
+over_year <- function(v, y0, fiscal, f = sum) over_ons_year(v, qkey, y0, fiscal, f)
 
 yr <- unique(etbd[, c("sheet", "y0", "fiscal")])
 yr$shock <- over_year(p$unant, yr$y0, yr$fiscal, sum)
@@ -146,33 +138,6 @@ TT <- sort(unique(d$y0)); NT <- length(TT); ND <- 10
 d$rank_c <- 5.5 - d$decile           # +4.5 at the bottom, -4.5 at the top
 d$si     <- d$shock * d$rank_c
 
-# Two-way within transform, exact on a balanced panel (Frisch-Waugh), so the
-# covariance is estimated on two parameters rather than fifty dummies.
-demean2 <- function(x, i, t) {
-  m <- tapply(x, list(i, t), function(z) z)
-  x - ave(x, i, FUN = function(z) mean(z, na.rm = TRUE)) -
-      ave(x, t, FUN = function(z) mean(z, na.rm = TRUE)) + mean(x, na.rm = TRUE)
-}
-
-#' Driscoll-Kraay standard errors: sum the scores across deciles within a year,
-#' then Newey-West the resulting time series. Robust to the fact that all ten
-#' deciles see the same shock, which is the whole reason the panel looks larger
-#' than it is.
-dk_se <- function(X, u, tidx, L) {
-  X <- as.matrix(X); n <- nrow(X); k <- ncol(X)
-  XtXi <- solve(crossprod(X))
-  H <- rowsum(X * u, tidx)                       # one row per year
-  S <- crossprod(H)
-  if (L > 0) for (l in seq_len(L)) {
-    w <- 1 - l/(L + 1); m <- nrow(H)
-    if (m - l < 1) break
-    G <- crossprod(H[(l+1):m, , drop = FALSE], H[1:(m-l), , drop = FALSE])
-    S <- S + w * (G + t(G))
-  }
-  Tn <- nrow(H)
-  sqrt(diag(XtXi %*% S %*% XtXi) * (n / (n - k - ND - Tn + 1)))
-}
-
 HMAX <- 4
 project_component <- function(cmp, H = 0:HMAX) {
   do.call(rbind, lapply(H, function(h) {
@@ -193,7 +158,7 @@ project_component <- function(cmp, H = 0:HMAX) {
     x2  <- demean2(df$si1, df$i, df$t)
     X   <- cbind(si = x1, si1 = x2)
     fit <- lm.fit(X, yd)
-    se  <- dk_se(X, residuals(fit), df$t, h + 1)
+    se  <- dk_se(X, residuals(fit), df$t, h + 1, ND)
     bb  <- coef(fit)[["si"]]
     data.frame(component = cmp, h = h, years = length(full), n = nrow(df),
                b = bb, se = se[1], t = bb / se[1],
@@ -277,7 +242,7 @@ grad_on <- function(cmp, drv, H = 0:HMAX, ctrl = NULL) {
     X <- sapply(setdiff(names(df), c("y","t","i")),
                 function(v) demean2(df[[v]], df$i, df$t))
     fit <- lm.fit(X, demean2(df$y, df$i, df$t))
-    se <- dk_se(X, residuals(fit), df$t, abs(h) + 1)
+    se <- dk_se(X, residuals(fit), df$t, abs(h) + 1, ND)
     data.frame(driver = drv, component = cmp, h = h, b = coef(fit)[[1]],
                se = se[1], t = coef(fit)[[1]] / se[1])
   }))
@@ -366,7 +331,7 @@ project_bh <- function(cmp, H = 0:HMAX) {
     full <- as.integer(names(which(table(df$t) == ND))); df <- df[df$t %in% full, ]
     X <- cbind(s = demean2(df$s, df$i, df$t), s1 = demean2(df$s1, df$i, df$t))
     fit <- lm.fit(X, demean2(df$y, df$i, df$t))
-    se <- dk_se(X, residuals(fit), df$t, h + 1)
+    se <- dk_se(X, residuals(fit), df$t, h + 1, ND)
     data.frame(component = cmp, h = h, b = coef(fit)[["s"]], se = se[1],
                t = coef(fit)[["s"]] / se[1])
   }))
