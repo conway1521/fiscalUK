@@ -30,5 +30,6 @@ source("R/18_consumption.R")          # Paper 2: household consumption, the prim
 source("R/19_incidence.R")            # Paper 2: distributional incidence from public ONS data
 source("R/20_state_dependence.R")     # Paper 2: what survives - state-dependent multipliers
 source("R/21_p2_figures.R")          # Paper 2: figures
+source("R/22_distribution.R")         # Paper 2: the distributional half, third attempt
 
 cat("\nDone. Outputs in data-derived/ and output/.\n")
