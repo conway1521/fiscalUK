@@ -250,24 +250,104 @@ msg("  bottom decile is far larger than anything the literature reports. This")
 msg("  design cannot detect a plausible distributional effect, so the absence")
 msg("  of one here is not evidence that there is none.")
 
-# --- why: there is almost no distributional variation to explain -------------
-msg("\n=== WHY: DECILE SHARES BARELY MOVE ===")
-w <- reshape(d[, c("y0","decile","r_orig","r_disp","shock")],
-             idvar = "y0", timevar = "decile", direction = "wide")
-w <- w[order(w$y0), ]
-for (cmp in c("orig","disp")) {
-  tot <- rowSums(w[, paste0("r_", cmp, ".", 1:10)])
-  for (dd in c(1, 10)) {
-    sh <- w[[paste0("r_", cmp, ".", dd)]] / tot
-    msg("  %-18s decile %2d: share %.4f, sd of its annual change %.4f",
-        LABS[cmp], dd, mean(sh), sd(diff(sh)))
-  }
+# --- why: a positive control, and it clears the design ----------------------
+# Before blaming the data, check that the design can detect ANY gradient. Same
+# panel, same fixed effects, same Driscoll-Kraay errors, with the tax shock
+# replaced by two drivers that are known to move the income distribution.
+msg("\n=== POSITIVE CONTROL: CAN THIS DESIGN DETECT ANYTHING? YES ===")
+d$dU <- NA_real_; d$gY <- NA_real_
+yrs <- unique(d[, c("y0","shock")]); yrs <- yrs[order(yrs$y0), ]
+yrs$U  <- over_year(p$Unemployment, yrs$y0, yrs$y0 %in% d$y0[grepl("-", d$sheet)], mean)
+yrs$dU <- c(NA, diff(yrs$U))
+yrs$gY <- c(NA, 100 * diff(over_year(p$lrgdp, yrs$y0,
+                                     yrs$y0 %in% d$y0[grepl("-", d$sheet)], mean)))
+d$dU <- yrs$dU[match(d$y0, yrs$y0)]; d$gY <- yrs$gY[match(d$y0, yrs$y0)]
+
+grad_on <- function(cmp, drv, H = 0:HMAX, ctrl = NULL) {
+  do.call(rbind, lapply(H, function(h) {
+    key <- function(off) match(paste(d$decile, d$y0 + off), paste(d$decile, d$y0))
+    y <- 100 * (d[[paste0("r_", cmp)]][key(h)] -
+                d[[paste0("r_", cmp)]][key(-1)]) / d$r_gross[key(-1)]
+    si <- d[[drv]] * d$rank_c
+    df <- data.frame(y = y, s = si, s1 = si[key(-1)], t = d$y0, i = d$decile)
+    if (!is.null(ctrl)) for (cv in ctrl) df[[cv]] <- d[[cv]] * d$rank_c
+    df <- df[complete.cases(df), ]
+    full <- as.integer(names(which(table(df$t) == ND))); df <- df[df$t %in% full, ]
+    if (length(full) < 12) return(NULL)
+    X <- sapply(setdiff(names(df), c("y","t","i")),
+                function(v) demean2(df[[v]], df$i, df$t))
+    fit <- lm.fit(X, demean2(df$y, df$i, df$t))
+    se <- dk_se(X, residuals(fit), df$t, abs(h) + 1)
+    data.frame(driver = drv, component = cmp, h = h, b = coef(fit)[[1]],
+               se = se[1], t = coef(fit)[[1]] / se[1])
+  }))
 }
-msg("  The bottom decile holds under one per cent of market income, because it")
-msg("  is mostly households with no earner, and its share moves by 0.0015 a")
-msg("  year. There is very little distributional variation at annual frequency")
-msg("  for any shock to explain, and a tax change has to compete with pension")
-msg("  uprating, benefit reform and the composition of who is poor that year.")
+show_grad <- function(z, lab) msg("  %-30s %s", lab,
+  paste(sprintf("h%+d %+6.2f(%+5.2f)%s", z$h, z$b, z$t,
+                ifelse(abs(z$t) > 1.96, "*", " ")), collapse = " "))
+ctl <- do.call(rbind, lapply(c("dU","gY"), function(v)
+  do.call(rbind, lapply(c("orig","disp"), function(c2) grad_on(c2, v)))))
+for (v in c("dU","gY")) for (c2 in c("orig","disp"))
+  show_grad(ctl[ctl$driver == v & ctl$component == c2, ],
+            sprintf("%s, %s", c(dU="unemployment +1pp", gY="GDP growth +1%")[v],
+                    LABS[c2]))
+msg("  Both drivers produce strong, correctly signed gradients, |t| up to 3.6.")
+msg("  A contraction compresses the MARKET income distribution because the")
+msg("  bottom decile holds under one per cent of market income and has little")
+msg("  to lose, while the benefit system cushions it further in disposable")
+msg("  terms. So the panel CAN see distributional dynamics. The design is not")
+msg("  the problem, and neither is the annual frequency.")
+
+msg("\n=== SO THE PROBLEM IS THE SHOCK, AND IT IS ARITHMETIC ===")
+msg("  driver standard deviation over the 41 ONS years:")
+msg("    unemployment change %.3f pp | GDP growth %.3f%% | tax surprise %.3f%% of GDP",
+    sd(yrs$dU, na.rm = TRUE), sd(yrs$gY, na.rm = TRUE), sd(yrs$shock, na.rm = TRUE))
+r_o <- res[res$component == "orig" & res$h == 4, ]
+g_o <- ctl[ctl$driver == "gY" & ctl$component == "orig" & ctl$h == 4, ]
+msg("  At h=4 the standard error on GDP growth is %.3f and on the tax surprise",
+    g_o$se)
+msg("  %.3f, a ratio of %.1f. The driver standard deviations differ by %.1f.",
+    r_o$se, r_o$se / g_o$se, sd(yrs$gY, na.rm=TRUE) / sd(yrs$shock, na.rm=TRUE))
+msg("  The design extracts the same precision per unit of variation from each.")
+msg("  The tax surprise simply carries a sixth of the information that GDP")
+msg("  growth does. This is Paper 1's central finding arriving as an estimation")
+msg("  constraint: the surprise component of UK tax policy has largely vanished.")
+
+# --- buying variance costs the identification -------------------------------
+# The obvious response is to add the anticipated measures back at their
+# implementation dates, which raises the standard deviation from 0.328 to 0.367
+# and the mean absolute impulse from 0.166 to 0.253. It produces a significant
+# gradient. It does not survive falsification, and this is recorded so that the
+# next reader does not rediscover it and believe it.
+msg("\n=== A SIGNIFICANT RESULT THAT MUST NOT BE USED ===")
+d$total <- d$shock + over_year(p$ant_imp, d$y0,
+                               grepl("-", d$sheet), sum)
+d$ant_imp <- over_year(p$ant_imp, d$y0, grepl("-", d$sheet), sum)
+tot <- do.call(rbind, lapply(c("orig","disp"), function(c2) grad_on(c2, "total")))
+for (c2 in c("orig","disp"))
+  show_grad(tot[tot$component == c2, ], sprintf("surprise + anticipated, %s", LABS[c2]))
+msg("  Significant at four of five horizons on market income. Then:")
+pl <- do.call(rbind, lapply(c("orig","disp"), function(c2) grad_on(c2, "total", -3:-2)))
+for (c2 in c("orig","disp"))
+  show_grad(pl[pl$component == c2, ], sprintf("  PLACEBO, before the shock, %s", LABS[c2]))
+an <- do.call(rbind, lapply(c("orig","disp"), function(c2) grad_on(c2, "ant_imp")))
+for (c2 in c("orig","disp"))
+  show_grad(an[an$component == c2, ], sprintf("  anticipated half ALONE, %s", LABS[c2]))
+cy <- do.call(rbind, lapply(c("orig","disp"),
+       function(c2) grad_on(c2, "total", 0:HMAX, ctrl = c("gY","dU"))))
+for (c2 in c("orig","disp"))
+  show_grad(cy[cy$component == c2, ], sprintf("  controlling for the cycle, %s", LABS[c2]))
+msg("  Three failures. The placebo is significant three years BEFORE the shock")
+msg("  and with the opposite sign, so the gradient is a trend running through")
+msg("  the shock rather than a response to it. The whole effect comes from the")
+msg("  anticipated half, whose implementation dates are chosen by a Chancellor")
+msg("  and which Paper 1 shows are scheduled around elections, so it is not")
+msg("  exogenous to the state it lands in. And controlling for the cycle halves")
+msg("  the market-income gradient and removes the disposable-income one, which")
+msg("  says most of what is left is the ordinary GDP channel already priced in")
+msg("  Section 3. DO NOT WRITE THIS UP.")
+write.csv(rbind(tot, pl, an, cy, ctl),
+          file.path(OUTPUT, "p2_distribution_falsified.csv"), row.names = FALSE)
 
 # --- not the linear restriction ----------------------------------------------
 # A linear rank interaction imposes a monotone gradient. If the effect were
@@ -304,6 +384,9 @@ msg("  Bottom half against top half, no monotonicity imposed. Also nothing.")
 # The panel above is the efficient version. This is the transparent one: form
 # the ratio of top-decile to bottom-decile real income and project it directly,
 # with the machinery used everywhere else in the project.
+w <- reshape(d[, c("y0","decile","r_orig","r_disp","shock")],
+             idvar = "y0", timevar = "decile", direction = "wide")
+w <- w[order(w$y0), ]
 msg("\n=== CROSS-CHECK: top decile minus bottom decile, single time series ===")
 for (cmp in c("orig", "disp")) {
   g <- unname(log(w[[paste0("r_", cmp, ".10")]]) - log(w[[paste0("r_", cmp, ".1")]]))
@@ -346,18 +429,30 @@ msg("  rather than a restatement of it.")
 
 # --- verdict -----------------------------------------------------------------
 msg("\n=== VERDICT ===")
-msg("  THIRD FAILURE of the distributional half, and the cleanest of the three.")
-msg("  Script 15 could not decompose by instrument: no variation. Script 19")
-msg("  could not split the shock by incidence: the slices correlate at 0.93.")
-msg("  This script splits the outcome instead, which is the right design, and")
-msg("  fails for a reason that is a property of the data rather than of the")
-msg("  method: decile income shares are too stable, and the annual frequency")
-msg("  too coarse, for a tax shock to be visible against them.")
+msg("  THIRD FAILURE of the distributional half, and the first one that says")
+msg("  WHY rather than merely that. Script 15 could not decompose by instrument")
+msg("  for want of variation. Script 19 split the shock and got two series")
+msg("  correlated at 0.93. This script splits the outcome, which is the correct")
+msg("  design, and the positive control proves the design works: unemployment")
+msg("  and GDP growth both produce gradients at |t| above 3 in the same panel.")
 msg("")
-msg("  That is now a measured limit rather than a presumption. The paper can")
-msg("  say that three public-data routes to the distributional question were")
-msg("  tried and priced, and that household micro data is necessary rather")
-msg("  than merely preferable. Report the MDE, not the null.")
+msg("  The binding constraint is the shock, and it is arithmetic. The UK tax")
+msg("  surprise carries a sixth of the variation that GDP growth does, so the")
+msg("  minimum detectable gradient is 10 to 21 per cent of gross income between")
+msg("  the top and bottom decile. Buying the variance back by restoring the")
+msg("  anticipated measures produces a significant answer that fails its")
+msg("  placebo, comes wholly from the endogenously timed half, and does not")
+msg("  survive cycle controls.")
+msg("")
+msg("  This is not a coarseness problem that a better public dataset would fix.")
+msg("  Aggregate identification is exhausted: the exogenous surprise series has")
+msg("  no more information to give. Household micro data is required because it")
+msg("  supplies cross-sectional variation that does not come from the shock,")
+msg("  and that is now a demonstrated claim rather than an assumption.")
+msg("")
+msg("  What survives from this script is the aggregate corroboration above, on")
+msg("  the unanticipated series and on survey data independent of the national")
+msg("  accounts. That belongs in Section 3, not Section 6.")
 
 saveRDS(d, file.path(DERIVED, "p2_decile_panel.rds"))
 msg("\nwritten: output/p2_distribution_gradient.csv, output/p2_etb_aggregate.csv,")
