@@ -904,8 +904,6 @@ period where the lead is longest, so the documented rise understates the true on
 undefined references, roughly 5,450 words against the 7,500-word limit, no em dashes. `PAPER1.md` is
 marked superseded and kept as the record of the pre-review draft.
 
-**September 2026 prose revision.** Both papers were edited for tone on 14 September 2026: the
-audit-trail sentences, the hedges that followed each result, and the "survives" vocabulary were
-removed, the title blocks now carry a first-draft date and a version date, and Paper 2's
-work-in-progress section was folded into one paragraph of Section 5. No number changed. The website
-carries the revised PDFs.
+**14 September 2026.** Both papers revised: the title blocks carry a first-draft date and a
+version date, Paper 2's Section 6 is folded into one paragraph of Section 5, and the prose is
+revised throughout. No number changed. The website carries the revised PDFs.
