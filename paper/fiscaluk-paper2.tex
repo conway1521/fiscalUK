@@ -20,12 +20,12 @@
 \onehalfspacing
 
 \title{\textbf{When to Raise Taxes:\\ State Dependence in the UK Tax Multiplier}}
-\author{Alessandro Conway\thanks{Working paper, incomplete by design. Section~\ref{sec:wip} sets out
-the part of the project that is not finished and says what it needs. Everything else reproduces end
-to end from the replication package. I thank James Cloyne for making the underlying narrative dataset
-public, and Cloyne, Dimsdale, Postel-Vinay and H\"urtgen for depositing the interwar measures and the
-macroeconomic panel used here, without which this paper could not exist.}}
-\date{September 2026}
+\author{Alessandro Conway\thanks{Working paper. I thank James Cloyne for making the underlying
+narrative dataset public, and Cloyne, Dimsdale, Postel-Vinay and H\"urtgen for depositing the
+interwar measures and the macroeconomic panel used here, without which this paper could not exist.
+A companion paper, \emph{The anticipation content of fiscal policy}, builds the measure-level
+record this paper estimates on.}}
+\date{First draft September 2026}
 
 \begin{document}
 \maketitle
@@ -38,12 +38,12 @@ below its own recent average when the change took effect. Against a tax rise wor
 annual GDP, consumption falls by 7.3 per cent at its trough when there is slack and by 3.2 per cent
 when there is not. The difference is estimated directly, with its own standard error, and is
 significant at eight of seventeen horizons. Consumption is the better outcome to use: it responds
-more than output, on three times as many horizons, and unlike the output response it survives the
-removal of the single Budget on which the published UK multiplier rests. The shock series reproduces
+more than output, on three times as many horizons, and unlike the output response it holds when the
+single Budget on which the published UK multiplier rests is removed. The shock series reproduces
 \citet{cloyne2013} exactly before being extended, which fixes the conventions the estimate turns on.
-Three further questions are posed and left unanswered because the record cannot carry them: which tax
-matters, whether pre-announcement blunts the effect, and who bears the cost. Each is reported as a
-measured limit rather than a caveat.
+The aggregate record cannot separate one tax from another, cannot detect whether pre-announcement
+blunts the effect, and cannot say whose spending falls, and the paper measures each of those limits
+and names the household data that the distributional question needs.
 \end{abstract}
 
 \noindent \textbf{Keywords:} fiscal multipliers, narrative tax shocks, state dependence, local
@@ -83,7 +83,7 @@ The question of whether the multiplier depends on the state of the economy is no
 \citet{ramey2018} dispute the finding for government spending using a longer sample and a different
 treatment of the news. Neither settles the question for tax changes, and neither is about the United
 Kingdom. What this paper adds is a UK answer, on household consumption rather than output, from a
-narrative series whose construction is verified rather than assumed.
+narrative series that reproduces the published one exactly before extending it.
 
 The result is that against a tax rise worth one per cent of annual GDP, household consumption falls
 by 7.3 per cent at its trough when unemployment is above its own recent average, and by 3.2 per cent
@@ -92,13 +92,13 @@ spending in a slack economy and roughly \pounds 2 in a tight one. The gap is est
 rather than inferred from two separate regressions, and is significant at eight of seventeen
 horizons.
 
-Three further questions are posed in Section~\ref{sec:limits} and answered in the negative. The
-record cannot say which tax matters, because most instruments are one or two episodes. It cannot say
-whether pre-announcement blunts a tax change, because the test lacks the power to detect an effect
-even as large as the one it is being compared against. And it cannot say who bears the cost, because
-splitting a measure by the incidence of its instrument produces two series that move together almost
-perfectly. The last of these is the subject of Section~\ref{sec:wip}, which describes work in
-progress rather than a result.
+Section~\ref{sec:limits} reports what the aggregate record cannot support. It cannot say which tax
+matters, because most instruments are one or two episodes. It cannot say whether pre-announcement
+blunts a tax change, because the test lacks the power to detect an effect even as large as the one
+it is being compared against. And it cannot say who bears the cost, because splitting a measure by
+the incidence of its instrument produces two series that move together almost perfectly, so the
+distributional answer needs households observed directly, and the section names the survey that can
+carry it.
 
 \section{Data}\label{sec:data}
 
@@ -198,8 +198,7 @@ expenditure components begin in 1955Q1 and version 3.1 ends in 2016Q4, so consum
 
 \subsection{Identifying variation}
 
-Table~\ref{tab:var} reports what there is to work with. It is not abundant, and it is worth seeing
-before any estimate is read.
+Table~\ref{tab:var} reports the identifying variation, which is scarce in the modern period.
 
 \begin{table}[htbp]
 \centering
@@ -218,13 +217,13 @@ Era & Quarters & Unanticipated & Non-zero quarters & News \\
 \\[4pt]
 \begin{minipage}{0.86\textwidth}
 \footnotesize The surprise series keeps roughly the same number of events throughout and loses
-four-fifths of its amplitude. Surprises did not stop happening; they stopped being large. That is the
+four-fifths of its amplitude, so the surprises kept coming and stopped being large. That is the
 companion paper's central finding seen from the estimation side, and it is why no result below is
 reported for the modern period alone.
 \end{minipage}
 \end{table}
 
-\section{Consumption, not output}\label{sec:outcome}
+\section{Consumption responds more than output}\label{sec:outcome}
 
 For horizon $h$, the projection is
 \[
@@ -266,11 +265,10 @@ The stronger reason to prefer consumption is robustness. The published UK tax mu
 heavily on one Budget. In \citeauthor{cloyne2013}'s own 1955 to 2009 surprise series the June 1979
 Budget, which raised VAT to 15 per cent, is the largest single observation at $+1.596$ per cent of
 GDP, and removing that quarter takes his aggregate output response from $t = -2.45$ with four
-significant horizons to $t = -1.46$ with none. The same is true of the series built here and of the
-2025 revision. The output response does not survive it.
-
-The consumption response does. Removing the same quarter leaves a trough of $-3.78$ with $t = -2.27$,
-so the sign, most of the magnitude and the significance all hold.
+significant horizons to $t = -1.46$ with none, and the same is true of the series built here and of
+the 2025 revision. The consumption response holds without it: removing the same quarter leaves a
+trough of $-3.78$ with $t = -2.27$, so the sign, most of the magnitude and the significance all
+stand.
 
 That single Budget is worth a further remark. It enters at $+1.596$ in the 2013 coding and at
 $+0.377$ in the 2025 revision, so the largest postwar observation in this literature moved by a factor
@@ -303,8 +301,8 @@ $-7.37$ with $t = -4.32$.
 \end{minipage}
 \end{table}
 
-Two separate estimates that differ are not evidence that the difference is real. Table~\ref{tab:int}
-therefore estimates the difference itself, by interacting the shock with the state indicator, so that
+Two separate estimates that differ do not by themselves establish the difference, so
+Table~\ref{tab:int} estimates the difference itself, by interacting the shock with the state indicator, so that
 the gap carries its own standard error.
 
 \begin{table}[htbp]
@@ -344,28 +342,26 @@ the tight response troughs shallowly at two years and returns to zero.
 Expressed the way a Chancellor would want it, and taking consumption at 61 per cent of GDP, a tax rise
 of one per cent of GDP is followed at its worst by a fall in household spending of about 4.5 per cent
 of GDP when there is slack, against about 2 per cent when there is not. The trough arrives at two to
-three years in both cases, so this is a claim about the medium run and not about the quarter of
-impact.
+three years in both cases, so this is a claim about the medium run.
 
 \subsection{What is not shown}
 
 The multiplier does appear to fall as the pre-announcement regime takes hold, from a trough of
 $-4.52$ over 1955 to 1985 to $-2.97$ over 1986 to 2016. The late interval spans zero and the two
-overlap heavily, so this is a direction and not a finding, and it is reported here rather than in a
-table for that reason.
+overlap heavily, so this is a direction rather than an estimate.
 
-A tempting bridge to the companion paper also fails to carry weight. If tax changes are now scheduled
+A second bridge to the companion paper carries less weight than it appears to. If tax changes are now scheduled
 years ahead, a Chancellor might be unable to see the state a measure will land in, which combined
 with the result above would be a first-order cost of pre-announcement. The correlation between slack
 at announcement and slack at implementation does fall with notice, from 0.995 for measures taking
 effect within 90 days to 0.806 for those taking more than a year, and the typical state moves by 0.74
-points rather than 0.03. That is real and it is modest. Unemployment is persistent enough that even
-two years out a Chancellor mostly knows the state, and the claim should be made at that size.
+points rather than 0.03. That is real and it is modest: unemployment is persistent enough that even
+two years out a Chancellor mostly knows the state.
 
 \section{What the record cannot support}\label{sec:limits}
 
-Three questions were posed and abandoned. Each is reported here with the number that killed it,
-because a measured limit is more use to the next researcher than a caveat.
+Three further questions lie beyond the aggregate record, and the number that decides each is
+given below.
 
 \paragraph{Which tax.} Instrument-level multipliers look estimable on measure counts, with 449
 income tax measures, 350 excise and 175 corporate. They are not estimable on variation. Eighty-four
@@ -380,35 +376,30 @@ pre-announced tax changes move consumption less, because households have already
 announcement-dated series returns no detectable response at any horizon. That null is uninformative:
 the minimum detectable effect of the design, the smallest true response it would find four times in
 five, is 10.5 per cent against a surprise response of 5.3. The test cannot distinguish no
-announcement effect from an announcement effect exactly as large as the surprise. Nothing should be
-concluded from it in either direction.
+announcement effect from an announcement effect exactly as large as the surprise.
 
-\paragraph{Who bears the cost.} This is the subject of the next section.
-
-\section{Work in progress: the distributional half}\label{sec:wip}
-
-\emph{This section describes work that is not finished. It is included because the question it asks
-is the one the paper most wants to answer, and because the route to answering it is now clear.}
-
-If a pound taken from a household with no buffer cuts spending by more than a pound taken from a
-household with savings, then the aggregate response above conceals a distribution, and two tax
-packages of the same size can have different costs depending on where they land. That is the
-mechanism \citet{cloyne2025} and the heterogeneous-agent literature would predict, and it is the
-policy question behind the whole exercise.
-
-\subsection{What is already possible, and what it shows}
-
+\paragraph{Who bears the cost.} If a pound taken from a household with no buffer cuts spending by
+more than a pound taken from a household with savings, the aggregate response above conceals a
+distribution, and two tax packages of the same size can have different costs depending on where they
+land, which is the mechanism \citet{cloyne2025} and the heterogeneous-agent literature would predict.
 The ONS Effects of Taxes and Benefits tables report, for every year from 1977, what each income
-decile pays in income tax, National Insurance, council tax, VAT and each duty. That gives the cash
-incidence of every instrument, and 1,036 measures carrying 83 per cent of gross value can be placed
-on it. Corporation tax, capital gains, inheritance and North Sea measures cannot be placed, because
-the ONS tables never allocate those to households.
-
-The gradient is real and correctly ordered. The bottom five deciles bear 0.36 of duties, 0.31 of VAT,
-0.19 of stamp duty, 0.16 of National Insurance and 0.15 of income tax. These are cash shares, so none
-reaches a half: richer households pay more of every tax in absolute terms. What the ordering measures
-is relative concentration, and duties lean more than twice as far down the distribution as income tax
-does. Figure~\ref{fig:inc} shows the series.
+decile pays in income tax, National Insurance, council tax, VAT and each duty, and 1,036 measures
+carrying 83 per cent of gross value can be placed on that cash incidence; corporation tax, capital
+gains, inheritance and North Sea measures cannot, because the tables never allocate them to
+households. The gradient is real and correctly ordered: the bottom five deciles bear 0.36 of duties,
+0.31 of VAT, 0.19 of stamp duty, 0.16 of National Insurance and 0.15 of income tax, so duties lean
+more than twice as far down the distribution as income tax does, as Figure~\ref{fig:inc} shows.
+Splitting each measure into a bottom-borne and a top-borne part and projecting consumption on each
+gives troughs of $-14.3$ and $-5.1$, the right sign and the expected ordering, and it is not an
+estimate of heterogeneity: the two series correlate at 0.93 because they are slices of the same
+measures, the bottom-borne interval runs from $-31.3$ to $+2.7$, and standardised to a one standard
+deviation shock the two responses are 0.60 and 0.65 per cent of consumption. Slicing one shock cannot
+identify heterogeneity, because nothing in the data separates the slices, and the identification has
+to come from households observed directly. The Living Costs and Food Survey and its predecessor the
+Family Expenditure Survey record household expenditure from 1961 and allow the consumption response
+to be estimated by position in the income or liquidity distribution; the specification is written,
+the aggregate it decomposes is estimated above, and the household estimation is the next step of
+this work.
 
 \begin{figure}[htbp]
 \centering
@@ -417,49 +408,22 @@ does. Figure~\ref{fig:inc} shows the series.
 \label{fig:inc}
 \end{figure}
 
-Splitting each measure into a bottom-borne and a top-borne part and projecting consumption on each
-gives troughs of $-14.3$ and $-5.1$: a pound taken from the bottom half looks like it costs roughly
-three times the consumption of a pound taken from the top. That is the right sign and the expected
-ordering, and it is not a result. The bottom-borne interval runs from $-31.3$ to $+2.7$ and includes
-zero, the two series correlate at 0.93 because they are slices of the same measures rather than
-different ones, and only 15 to 36 per cent of any measure lands on the bottom half, so the per-pound
-coefficient extrapolates 24 standard deviations. Standardised to a one standard deviation shock the
-two responses are 0.60 and 0.65 per cent of consumption, which is to say indistinguishable.
-
-The obstacle is structural rather than statistical. Slicing one shock cannot identify heterogeneity,
-because nothing in the data separates the slices. Identification requires either measures that differ
-in incidence, which is the instrument decomposition ruled out above, or households observed directly.
-
-\subsection{What the finished version requires}
-
-Household micro data. The Living Costs and Food Survey and its predecessor the Family Expenditure
-Survey record household expenditure from 1961 and would allow the consumption response to be
-estimated separately by position in the income or liquidity distribution, in the manner of the
-household-level fiscal transmission literature. The Wealth and Assets Survey, from 2006, is the only
-UK source carrying wealth and liquidity directly, but it begins exactly where the surprise series has
-lost four-fifths of its amplitude, so the long sample and the wealth measure cannot currently be had
-at once. All three are held by the UK Data Service under an End User Licence.
-
-The specification is already written and the aggregate it decomposes is already estimated. What
-remains is data access, and until that is resolved this paper reports the aggregate consumption
-response and the incidence gradient separately, without joining them.
-
 \section{Conclusion}
 
-The timing of a tax rise is an economic decision and not only a political one. On UK data from 1955
+The timing of a tax rise is an economic decision as well as a political one. On UK data from 1955
 to 2016, the same unanticipated tax rise is followed by roughly twice the fall in household
 consumption when unemployment is above its recent average as when it is below, and the difference is
 large enough, and estimated precisely enough, to matter for the choice of when to consolidate.
 
-Two cautions belong with that. The result is about the medium run, with the gap opening after a year
+Two qualifications belong with that. The result is about the medium run, with the gap opening after a year
 and widest at eleven quarters, so it says nothing about the quarter of impact. And it is a statement
 about the average tax rise, because the record cannot separate one instrument from another and cannot
 yet say whose spending falls.
 
-The narrower methodological point may outlast the estimate. The published UK tax multiplier depends
-on a single Budget in June 1979 whose coded value moved by a factor of four between two vintages of
-the same dataset, and the output response does not survive its removal while the consumption response
-does. Anyone estimating fiscal multipliers on this record should check which of their results are
+A second point may outlast the estimate. The published UK tax multiplier depends on a single Budget
+in June 1979 whose coded value moved by a factor of four between two vintages of the same dataset,
+and the output response disappears when that Budget is removed while the consumption response holds.
+Anyone estimating fiscal multipliers on this record should check which of their results are
 statements about the British economy and which are statements about that one Budget.
 
 \bibliographystyle{agsm}

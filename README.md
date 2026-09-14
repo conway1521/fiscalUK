@@ -107,7 +107,12 @@ Requires R with `readxl`. Outputs land in `data-derived/` (measure-level dataset
 
 ## Status
 
-Pipeline complete and validated. Paper 1 in drafting. See [PLAN.md](PLAN.md).
+Pipeline complete and validated. Both papers are working papers in `paper/`, revised
+September 2026: `fiscaluk-paper1.pdf` (The anticipation content of fiscal policy) and
+`fiscaluk-paper2.pdf` (When to raise taxes). Every number in either paper is produced by
+the scripts in `R/` and regenerates from `run_all.R`; the figures are written to
+`output/figures/`, which is gitignored, so build the figures before the PDFs. See
+[PLAN.md](PLAN.md) for the plan and [RESULTS.md](RESULTS.md) for the record.
 
 ## Known limitation for Paper 2
 
