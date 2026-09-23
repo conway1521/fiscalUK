@@ -69,7 +69,7 @@ p2 <- ggplot(ri, aes(est, instrument, colour = sig)) +
   geom_point(size = 2.3) +
   scale_colour_manual(values = c("p < 0.05" = INK, "not significant" = "grey65"), name = NULL) +
   scale_x_continuous(labels = scales::percent_format(accuracy = 1)) +
-  labs(title = "Instrument choice is a timing choice",
+  labs(title = "Gap length by instrument",
        subtitle = "Change in the probability of a 120+ day gap, relative to excise duties.\nBudget-event fixed effects: instruments announced on the same day by the same Chancellor.",
        x = "Percentage-point difference vs excise duties", y = NULL,
        caption = sprintf(paste0("Bars are 95%% confidence intervals, standard errors clustered on Budget event.\n",
@@ -98,7 +98,7 @@ p3 <- ggplot(d3, aes(season, long, fill = season)) +
   geom_text(aes(label = sprintf("%.0f%%\n(n = %d)", 100*long, n)), vjust = -0.25, size = 3.3) +
   scale_fill_manual(values = c("Spring Budget" = "grey70", "Autumn Budget" = INK), guide = "none") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1), limits = c(0, 1.02)) +
-  labs(title = "Why instruments differ: the fiscal-year clock",
+  labs(title = "Timing relative to the start of the fiscal year",
        subtitle = "Measures pinned to early April, by Budget season.\nThe same measure is three weeks from a March Budget and five months from a November one.",
        x = NULL, y = "Share with a 120+ day gap",
        caption = sprintf(paste0("April-pinned measures only (implementation 1-7 April), n = %s.\n",
@@ -117,7 +117,7 @@ p3b <- ggplot(d3b, aes(decade, share, colour = what)) +
   scale_colour_manual(values = c(INK, ACC, "grey55"), name = NULL) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   scale_x_continuous(breaks = seq(1940, 2010, 10)) +
-  labs(title = "When measures take effect has migrated",
+  labs(title = "Implementation dates by decade",
        subtitle = "Share of measures implemented on each date, by decade",
        x = NULL, y = "Share of measures",
        caption = "The shift from 6 April to 1 April is a move from the income tax year to the financial year.") +
